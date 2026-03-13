@@ -1,4 +1,3 @@
-version: '3.8'
 services:
   php:
     build:
@@ -15,6 +14,7 @@ services:
       - db
     networks:
       - app_network
+
   nginx:
     image: nginx:alpine
     container_name: event_nginx
@@ -27,6 +27,7 @@ services:
       - php
     networks:
       - app_network
+
   db:
     image: postgres:15-alpine
     container_name: event_db
