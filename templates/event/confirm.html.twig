@@ -1,45 +1,83 @@
 {% extends 'base.html.twig' %}
-
-{% block title %}Réservation confirmée{% endblock %}
+{% block title %}Réservation confirmée !{% endblock %}
 
 {% block body %}
 <div class="container py-5">
     <div class="row justify-content-center">
         <div class="col-lg-6 text-center">
-            <div class="card shadow">
-                <div class="card-body p-5">
-                    <i class="bi bi-check-circle-fill text-success display-1"></i>
-                    <h2 class="fw-bold mt-3">Réservation confirmée !</h2>
-                    <p class="text-muted">Merci <strong>{{ reservation.name }}</strong>,
-                    votre réservation a bien été enregistrée.</p>
 
-                    <hr>
+            <div style="margin-bottom:2rem;">
+                <div style="width:100px; height:100px; border-radius:50%; background:var(--accent-gradient-soft); border:2px solid rgba(124,58,237,0.4); display:flex; align-items:center; justify-content:center; margin:0 auto 1.5rem; animation: pulse 2s ease-in-out infinite;">
+                    <i class="bi bi-check-lg" style="font-size:2.5rem; color:var(--accent-violet);"></i>
+                </div>
+                <h1 style="font-size:2.2rem; font-weight:800; margin-bottom:.5rem;">
+                    <span class="text-gradient">Réservation confirmée !</span>
+                </h1>
+                <p style="color:var(--text-secondary);">
+                    Merci <strong style="color:var(--text-primary);">{{ reservation.name }}</strong>,
+                    votre place est réservée.
+                </p>
+            </div>
 
-                    <ul class="list-unstyled text-start">
-                        <li class="mb-2">
-                            <i class="bi bi-calendar3 text-primary me-2"></i>
-                            <strong>Événement :</strong> {{ reservation.event.title }}
-                        </li>
-                        <li class="mb-2">
-                            <i class="bi bi-geo-alt text-danger me-2"></i>
-                            <strong>Lieu :</strong> {{ reservation.event.location }}
-                        </li>
-                        <li class="mb-2">
-                            <i class="bi bi-clock text-warning me-2"></i>
-                            <strong>Date :</strong> {{ reservation.event.date|date('d/m/Y à H:i') }}
-                        </li>
-                        <li class="mb-2">
-                            <i class="bi bi-envelope text-info me-2"></i>
-                            <strong>Email :</strong> {{ reservation.email }}
-                        </li>
-                    </ul>
+            <div class="card-dark p-4 text-start mb-4">
+                <h6 style="color:var(--text-muted); text-transform:uppercase; letter-spacing:.1em; font-size:.75rem; margin-bottom:1.25rem;">
+                    Détails de la réservation
+                </h6>
 
-                    <a href="{{ path('event_index') }}" class="btn btn-primary mt-3">
-                        <i class="bi bi-arrow-left"></i> Retour aux événements
-                    </a>
+                <div class="d-flex flex-column gap-3">
+                    <div style="display:flex; gap:.75rem; align-items:center;">
+                        <div style="width:36px; height:36px; border-radius:8px; background:rgba(124,58,237,0.15); display:flex; align-items:center; justify-content:center; flex-shrink:0;">
+                            <i class="bi bi-calendar3" style="color:var(--accent-purple);"></i>
+                        </div>
+                        <div>
+                            <div style="font-size:.75rem; color:var(--text-muted);">Événement</div>
+                            <div style="font-weight:600;">{{ reservation.event.title }}</div>
+                        </div>
+                    </div>
+
+                    <div style="display:flex; gap:.75rem; align-items:center;">
+                        <div style="width:36px; height:36px; border-radius:8px; background:rgba(236,72,153,0.15); display:flex; align-items:center; justify-content:center; flex-shrink:0;">
+                            <i class="bi bi-clock" style="color:var(--accent-pink);"></i>
+                        </div>
+                        <div>
+                            <div style="font-size:.75rem; color:var(--text-muted);">Date</div>
+                            <div style="font-weight:600;">{{ reservation.event.date|date('d/m/Y à H:i') }}</div>
+                        </div>
+                    </div>
+
+                    <div style="display:flex; gap:.75rem; align-items:center;">
+                        <div style="width:36px; height:36px; border-radius:8px; background:rgba(124,58,237,0.15); display:flex; align-items:center; justify-content:center; flex-shrink:0;">
+                            <i class="bi bi-geo-alt" style="color:var(--accent-purple);"></i>
+                        </div>
+                        <div>
+                            <div style="font-size:.75rem; color:var(--text-muted);">Lieu</div>
+                            <div style="font-weight:600;">{{ reservation.event.location }}</div>
+                        </div>
+                    </div>
+
+                    <div style="display:flex; gap:.75rem; align-items:center;">
+                        <div style="width:36px; height:36px; border-radius:8px; background:rgba(16,185,129,0.15); display:flex; align-items:center; justify-content:center; flex-shrink:0;">
+                            <i class="bi bi-envelope" style="color:#10b981;"></i>
+                        </div>
+                        <div>
+                            <div style="font-size:.75rem; color:var(--text-muted);">Email</div>
+                            <div style="font-weight:600;">{{ reservation.email }}</div>
+                        </div>
+                    </div>
                 </div>
             </div>
+
+            <a href="{{ path('event_index') }}" class="btn-glow btn btn-lg w-100">
+                <i class="bi bi-arrow-left me-2"></i> Retour aux événements
+            </a>
         </div>
     </div>
 </div>
+
+<style>
+@keyframes pulse {
+    0%,100% { box-shadow: 0 0 0 0 rgba(124,58,237,0.3); }
+    50% { box-shadow: 0 0 0 20px rgba(124,58,237,0); }
+}
+</style>
 {% endblock %}

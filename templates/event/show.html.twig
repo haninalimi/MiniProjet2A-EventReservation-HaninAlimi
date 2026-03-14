@@ -1,64 +1,98 @@
 {% extends 'base.html.twig' %}
-
 {% block title %}{{ event.title }}{% endblock %}
 
 {% block body %}
 <div class="container py-5">
-    <nav aria-label="breadcrumb" class="mb-4">
-        <ol class="breadcrumb">
-            <li class="breadcrumb-item">
-                <a href="{{ path('event_index') }}">Événements</a>
-            </li>
-            <li class="breadcrumb-item active">{{ event.title }}</li>
-        </ol>
+
+    <nav style="margin-bottom:2rem;">
+        <a href="{{ path('event_index') }}" style="color:var(--text-muted); text-decoration:none; font-size:.875rem;">
+            <i class="bi bi-arrow-left me-1"></i> Événements
+        </a>
+        <span style="color:var(--text-muted); margin:0 .5rem;">/</span>
+        <span style="color:var(--text-secondary); font-size:.875rem;">{{ event.title }}</span>
     </nav>
 
-    <div class="row g-4">
+    <div class="row g-5">
         <div class="col-lg-8">
             {% if event.image %}
+            <div style="border-radius:20px; overflow:hidden; margin-bottom:2rem; border:1px solid var(--border-color);">
                 <img src="{{ asset('uploads/events/' ~ event.image) }}"
-                     class="img-fluid rounded mb-4 w-100"
                      alt="{{ event.title }}"
-                     style="max-height:400px;object-fit:cover">
+                     style="width:100%; max-height:420px; object-fit:cover;">
+            </div>
             {% endif %}
-            <h1 class="fw-bold">{{ event.title }}</h1>
-            <p class="lead text-muted">{{ event.description }}</p>
+
+            <h1 style="font-size:2.2rem; font-weight:800; margin-bottom:1rem;">
+                {{ event.title }}
+            </h1>
+
+            <div class="d-flex gap-2 flex-wrap mb-4">
+                <span class="badge-glow">
+                    <i class="bi bi-calendar3 me-1"></i>
+                    {{ event.date|date('d/m/Y à H:i') }}
+                </span>
+                <span class="badge-glow">
+                    <i class="bi bi-geo-alt me-1"></i>
+                    {{ event.location }}
+                </span>
+                <span class="badge-glow">
+                    <i class="bi bi-people me-1"></i>
+                    {{ event.seats - reservationCount }} / {{ event.seats }} places
+                </span>
+            </div>
+
+            <hr class="divider-glow">
+
+            <div style="color:var(--text-secondary); line-height:1.8; font-size:1.05rem;">
+                {{ event.description }}
+            </div>
         </div>
 
         <div class="col-lg-4">
-            <div class="card shadow-sm sticky-top" style="top:80px">
-                <div class="card-body">
-                    <h5 class="card-title mb-4">
-                        <i class="bi bi-info-circle text-primary"></i> Informations
+            <div style="position:sticky; top:90px;">
+                <div class="card-dark p-4">
+                    <h5 style="font-weight:700; margin-bottom:1.5rem;">
+                        <span class="text-gradient">Réserver ma place</span>
                     </h5>
-                    <ul class="list-unstyled">
-                        <li class="mb-3">
-                            <i class="bi bi-calendar3 text-primary me-2"></i>
-                            <strong>Date :</strong><br>
-                            <span class="ms-4">{{ event.date|date('d/m/Y à H:i') }}</span>
-                        </li>
-                        <li class="mb-3">
-                            <i class="bi bi-geo-alt text-danger me-2"></i>
-                            <strong>Lieu :</strong><br>
-                            <span class="ms-4">{{ event.location }}</span>
-                        </li>
-                        <li class="mb-3">
-                            <i class="bi bi-people text-success me-2"></i>
-                            <strong>Places disponibles :</strong><br>
-                            <span class="ms-4">
+
+                    {% set pct = ((event.seats - reservationCount) / event.seats * 100)|round %}
+                    <div style="margin-bottom:1.5rem;">
+                        <div class="d-flex justify-content-between mb-1">
+                            <span style="font-size:.8rem; color:var(--text-muted);">Places disponibles</span>
+                            <span style="font-size:.8rem; color:var(--accent-violet); font-weight:600;">
                                 {{ event.seats - reservationCount }} / {{ event.seats }}
                             </span>
-                        </li>
-                    </ul>
+                        </div>
+                        <div style="height:6px; background:rgba(255,255,255,.07); border-radius:3px; overflow:hidden;">
+                            <div style="height:100%; width:{{ pct }}%; background:var(--accent-gradient); border-radius:3px; transition:width .3s;"></div>
+                        </div>
+                    </div>
+
+                    <div class="d-flex flex-column gap-2 mb-4">
+                        <div style="display:flex; gap:.75rem; align-items:center; padding:.75rem; background:rgba(124,58,237,0.07); border-radius:10px;">
+                            <i class="bi bi-calendar3" style="color:var(--accent-purple); font-size:1.1rem;"></i>
+                            <div>
+                                <div style="font-size:.7rem; color:var(--text-muted);">Date</div>
+                                <div style="font-size:.875rem; font-weight:500;">{{ event.date|date('d/m/Y à H:i') }}</div>
+                            </div>
+                        </div>
+                        <div style="display:flex; gap:.75rem; align-items:center; padding:.75rem; background:rgba(236,72,153,0.07); border-radius:10px;">
+                            <i class="bi bi-geo-alt" style="color:var(--accent-pink); font-size:1.1rem;"></i>
+                            <div>
+                                <div style="font-size:.7rem; color:var(--text-muted);">Lieu</div>
+                                <div style="font-size:.875rem; font-weight:500;">{{ event.location }}</div>
+                            </div>
+                        </div>
+                    </div>
 
                     {% if event.seats - reservationCount > 0 %}
-                        <a href="{{ path('event_reserve', {id: event.id}) }}"
-                           class="btn btn-success w-100 btn-lg">
-                            <i class="bi bi-ticket-perforated"></i> Réserver ma place
+                        <a href="{{ path('event_reserve', {id: event.id}) }}" class="btn-glow btn w-100 btn-lg">
+                            <i class="bi bi-ticket-perforated me-2"></i> Réserver maintenant
                         </a>
                     {% else %}
-                        <button class="btn btn-secondary w-100 btn-lg" disabled>
-                            <i class="bi bi-x-circle"></i> Complet
+                        <button class="btn w-100 btn-lg" disabled
+                            style="background:rgba(255,255,255,.05); border:1px solid var(--border-color); color:var(--text-muted); border-radius:12px;">
+                            <i class="bi bi-x-circle me-2"></i> Complet
                         </button>
                     {% endif %}
                 </div>

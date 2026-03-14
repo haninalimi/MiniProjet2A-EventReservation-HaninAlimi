@@ -3,89 +3,306 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{% block title %}Event Reservation{% endblock %}</title>
+    <title>{% block title %}EventApp{% endblock %}</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <style>
-        .navbar-brand { font-weight: 700; font-size: 1.4rem; }
-        .card { transition: transform .2s, box-shadow .2s; }
-        .card:hover { transform: translateY(-4px); box-shadow: 0 8px 24px rgba(0,0,0,.12); }
-        .badge-seats { font-size: .75rem; }
-        .hero { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); }
-        .sidebar { min-height: calc(100vh - 56px); background: #2c3e50; }
-        .sidebar .nav-link { color: #bdc3c7; padding: .75rem 1.25rem; }
-        .sidebar .nav-link:hover, .sidebar .nav-link.active { color: #fff; background: rgba(255,255,255,.1); border-radius: 8px; }
-        .sidebar .nav-link i { margin-right: 8px; }
+        :root {
+            --bg-primary: #0a0a0f;
+            --bg-secondary: #111118;
+            --bg-card: #16161f;
+            --bg-card-hover: #1e1e2a;
+            --accent-purple: #7c3aed;
+            --accent-violet: #8b5cf6;
+            --accent-pink: #ec4899;
+            --accent-gradient: linear-gradient(135deg, #7c3aed, #ec4899);
+            --accent-gradient-soft: linear-gradient(135deg, rgba(124,58,237,0.15), rgba(236,72,153,0.15));
+            --text-primary: #f1f0ff;
+            --text-secondary: #9991b8;
+            --text-muted: #5c5780;
+            --border-color: rgba(124,58,237,0.2);
+            --border-hover: rgba(124,58,237,0.5);
+        }
+
+        * { box-sizing: border-box; }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            min-height: 100vh;
+        }
+
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: var(--bg-primary); }
+        ::-webkit-scrollbar-thumb { background: var(--accent-purple); border-radius: 3px; }
+
+        .navbar-custom {
+            background: rgba(10,10,15,0.85);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid var(--border-color);
+            padding: 1rem 0;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+        .navbar-brand-custom {
+            font-size: 1.4rem;
+            font-weight: 800;
+            background: var(--accent-gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-decoration: none;
+        }
+        .nav-link-custom {
+            color: var(--text-secondary) !important;
+            font-weight: 500;
+            font-size: .9rem;
+            padding: .5rem 1rem !important;
+            border-radius: 8px;
+            transition: all .2s;
+            text-decoration: none;
+        }
+        .nav-link-custom:hover {
+            color: var(--text-primary) !important;
+            background: rgba(124,58,237,0.1);
+        }
+
+        .btn-glow {
+            background: var(--accent-gradient);
+            border: none;
+            color: #fff;
+            font-weight: 600;
+            padding: .65rem 1.5rem;
+            border-radius: 12px;
+            transition: all .3s;
+            position: relative;
+            overflow: hidden;
+        }
+        .btn-glow::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: rgba(255,255,255,0);
+            transition: background .2s;
+        }
+        .btn-glow:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 30px rgba(124,58,237,0.5);
+            color: #fff;
+        }
+        .btn-outline-glow {
+            background: transparent;
+            border: 1px solid var(--border-hover);
+            color: var(--accent-violet);
+            font-weight: 600;
+            padding: .65rem 1.5rem;
+            border-radius: 12px;
+            transition: all .3s;
+        }
+        .btn-outline-glow:hover {
+            background: rgba(124,58,237,0.1);
+            color: var(--accent-violet);
+            transform: translateY(-2px);
+        }
+
+        .card-dark {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            transition: all .3s;
+            overflow: hidden;
+        }
+        .card-dark:hover {
+            border-color: var(--border-hover);
+            transform: translateY(-6px);
+            box-shadow: 0 20px 60px rgba(124,58,237,0.2);
+            background: var(--bg-card-hover);
+        }
+
+        .badge-glow {
+            background: rgba(124,58,237,0.2);
+            color: var(--accent-violet);
+            border: 1px solid rgba(124,58,237,0.3);
+            padding: .35rem .75rem;
+            border-radius: 20px;
+            font-size: .75rem;
+            font-weight: 600;
+        }
+
+        .input-dark {
+            background: rgba(255,255,255,0.04) !important;
+            border: 1px solid var(--border-color) !important;
+            color: var(--text-primary) !important;
+            border-radius: 12px !important;
+            padding: .75rem 1rem !important;
+            transition: all .2s;
+        }
+        .input-dark:focus {
+            background: rgba(124,58,237,0.08) !important;
+            border-color: var(--accent-purple) !important;
+            box-shadow: 0 0 0 3px rgba(124,58,237,0.15) !important;
+            outline: none !important;
+        }
+        .input-dark::placeholder { color: var(--text-muted) !important; }
+
+        .label-dark {
+            color: var(--text-secondary);
+            font-size: .85rem;
+            font-weight: 500;
+            margin-bottom: .4rem;
+        }
+
+        .divider-glow {
+            border: none;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, var(--border-hover), transparent);
+            margin: 1.5rem 0;
+        }
+
+        .text-gradient {
+            background: var(--accent-gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .glow-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: var(--accent-purple);
+            box-shadow: 0 0 8px var(--accent-purple);
+            display: inline-block;
+        }
+
+        .footer-dark {
+            background: var(--bg-secondary);
+            border-top: 1px solid var(--border-color);
+            padding: 2rem 0;
+            color: var(--text-muted);
+            font-size: .85rem;
+        }
+
+        .alert-dark-custom {
+            background: rgba(124,58,237,0.1);
+            border: 1px solid rgba(124,58,237,0.3);
+            color: var(--text-primary);
+            border-radius: 12px;
+        }
+        .alert-danger-custom {
+            background: rgba(239,68,68,0.1);
+            border: 1px solid rgba(239,68,68,0.3);
+            color: #fca5a5;
+            border-radius: 12px;
+        }
+        .alert-success-custom {
+            background: rgba(16,185,129,0.1);
+            border: 1px solid rgba(16,185,129,0.3);
+            color: #6ee7b7;
+            border-radius: 12px;
+        }
+
+        .blob {
+            position: fixed;
+            border-radius: 50%;
+            filter: blur(80px);
+            opacity: .12;
+            pointer-events: none;
+            z-index: 0;
+        }
+        .blob-1 {
+            width: 500px; height: 500px;
+            background: var(--accent-purple);
+            top: -100px; left: -100px;
+            animation: blobMove1 12s ease-in-out infinite;
+        }
+        .blob-2 {
+            width: 400px; height: 400px;
+            background: var(--accent-pink);
+            bottom: -100px; right: -100px;
+            animation: blobMove2 15s ease-in-out infinite;
+        }
+        @keyframes blobMove1 {
+            0%,100% { transform: translate(0,0) scale(1); }
+            50% { transform: translate(60px,40px) scale(1.1); }
+        }
+        @keyframes blobMove2 {
+            0%,100% { transform: translate(0,0) scale(1); }
+            50% { transform: translate(-40px,-60px) scale(1.05); }
+        }
+
+        main { position: relative; z-index: 1; }
     </style>
     {% block stylesheets %}{% endblock %}
 </head>
-<body class="bg-light">
+<body>
 
-{% block navbar %}
-<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
-    <div class="container">
-        <a class="navbar-brand" href="{{ path('event_index') }}">
-            <i class="bi bi-calendar-event"></i> EventApp
+<div class="blob blob-1"></div>
+<div class="blob blob-2"></div>
+
+<nav class="navbar-custom">
+    <div class="container d-flex align-items-center justify-content-between">
+        <a href="{{ path('event_index') }}" class="navbar-brand-custom">
+            ◈ EventApp
         </a>
-        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
-            <span class="navbar-toggler-icon"></span>
-        </button>
-        <div class="collapse navbar-collapse" id="navbarNav">
-            <ul class="navbar-nav me-auto">
-                <li class="nav-item">
-                    <a class="nav-link" href="{{ path('event_index') }}">
-                        <i class="bi bi-calendar3"></i> Événements
-                    </a>
-                </li>
-            </ul>
-            <ul class="navbar-nav">
-                <li class="nav-item" id="nav-user" style="display:none">
-                    <span class="nav-link text-light">
-                        <i class="bi bi-person-circle"></i>
-                        <span id="nav-email"></span>
-                    </span>
-                </li>
-                <li class="nav-item" id="nav-logout" style="display:none">
-                    <a class="nav-link" href="#" onclick="handleLogout()">
-                        <i class="bi bi-box-arrow-right"></i> Déconnexion
-                    </a>
-                </li>
-                <li class="nav-item" id="nav-login">
-                    <a class="nav-link" href="{{ path('app_login') }}">
-                        <i class="bi bi-box-arrow-in-right"></i> Connexion
-                    </a>
-                </li>
-            </ul>
+        <div class="d-flex align-items-center gap-2">
+            <a href="{{ path('event_index') }}" class="nav-link-custom">
+                <i class="bi bi-calendar3"></i> Événements
+            </a>
+            <div id="nav-auth-guest">
+                <a href="{{ path('app_login') }}" class="btn-outline-glow btn">
+                    <i class="bi bi-box-arrow-in-right"></i> Connexion
+                </a>
+            </div>
+            <div id="nav-auth-user" style="display:none" class="d-flex align-items-center gap-2">
+                <span class="badge-glow">
+                    <span class="glow-dot me-1"></span>
+                    <span id="nav-email-text"></span>
+                </span>
+                <button onclick="handleLogout()" class="btn-outline-glow btn btn-sm">
+                    <i class="bi bi-box-arrow-right"></i>
+                </button>
+            </div>
         </div>
     </div>
 </nav>
-{% endblock %}
 
 <main>
+    {% for type, messages in app.flashes %}
+        {% for message in messages %}
+        <div class="container mt-3">
+            <div class="alert-{{ type == 'success' ? 'success' : 'danger' }}-custom p-3">
+                <i class="bi bi-{{ type == 'success' ? 'check-circle' : 'exclamation-circle' }} me-2"></i>
+                {{ message }}
+            </div>
+        </div>
+        {% endfor %}
+    {% endfor %}
+
     {% block body %}{% endblock %}
 </main>
 
-<footer class="bg-dark text-light py-4 mt-5">
+<footer class="footer-dark mt-5">
     <div class="container text-center">
-        <p class="mb-0">© 2026 EventApp — FIA3-GL ISSAT Sousse</p>
+        <span class="text-gradient fw-bold">◈ EventApp</span>
+        <span class="mx-2">·</span>
+        FIA3-GL · ISSAT Sousse · 2026
     </div>
 </footer>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 <script type="module">
     import { TokenManager, getCurrentUser, logout } from '/js/auth.js';
-
-    window.handleLogout = () => { logout(); };
-
+    window.handleLogout = () => logout();
     document.addEventListener('DOMContentLoaded', async () => {
         if (TokenManager.isAuthenticated()) {
-            document.getElementById('nav-login').style.display = 'none';
-            document.getElementById('nav-logout').style.display = 'block';
-            document.getElementById('nav-user').style.display = 'block';
+            document.getElementById('nav-auth-guest').style.display = 'none';
+            document.getElementById('nav-auth-user').style.display = 'flex';
             try {
                 const user = await getCurrentUser();
-                document.getElementById('nav-email').textContent = user.email;
-            } catch (e) {}
+                document.getElementById('nav-email-text').textContent = user.email;
+            } catch(e) {}
         }
     });
 </script>

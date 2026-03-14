@@ -1,48 +1,67 @@
 {% extends 'base.html.twig' %}
-
 {% block title %}Connexion{% endblock %}
 
 {% block body %}
-<div class="container py-5">
-    <div class="row justify-content-center">
-        <div class="col-lg-5">
-            <div class="card shadow">
-                <div class="card-header bg-dark text-white text-center py-3">
-                    <h4 class="mb-0">
-                        <i class="bi bi-box-arrow-in-right"></i> Connexion
-                    </h4>
-                </div>
-                <div class="card-body p-4">
-                    <div id="alert-box"></div>
+<div style="min-height:calc(100vh - 80px); display:flex; align-items:center; justify-content:center; padding:2rem 1rem;">
+    <div style="width:100%; max-width:420px;">
 
-                    <div class="mb-3">
-                        <label class="form-label">Email</label>
-                        <input type="email" id="email" class="form-control"
-                               placeholder="votre@email.com">
-                    </div>
-                    <div class="mb-4">
-                        <label class="form-label">Mot de passe</label>
-                        <input type="password" id="password" class="form-control"
-                               placeholder="••••••••">
-                    </div>
+        <div style="text-align:center; margin-bottom:2.5rem;">
+            <div style="font-size:2.5rem; font-weight:900;" class="text-gradient">◈</div>
+            <h2 style="font-weight:800; margin-top:.5rem;">Bon retour !</h2>
+            <p style="color:var(--text-muted); font-size:.9rem;">Connectez-vous à votre compte</p>
+        </div>
 
-                    <div class="d-grid gap-2">
-                        <button id="btn-login" class="btn btn-primary btn-lg">
-                            <i class="bi bi-box-arrow-in-right"></i> Se connecter
-                        </button>
-                        <div class="text-center text-muted my-2">— ou —</div>
-                        <button id="btn-passkey" class="btn btn-outline-dark btn-lg">
-                            <i class="bi bi-fingerprint"></i> Connexion avec Passkey
-                        </button>
-                    </div>
+        <div class="card-dark p-4">
+            <div id="alert-box" style="margin-bottom:1rem;"></div>
 
-                    <hr>
-                    <p class="text-center mb-0">
-                        Pas encore de compte ?
-                        <a href="{{ path('app_register') }}">Créer un compte</a>
-                    </p>
-                </div>
+            <div style="display:flex; background:rgba(255,255,255,.04); border-radius:10px; padding:4px; margin-bottom:1.5rem;">
+                <button id="tab-password" onclick="switchTab('password')"
+                    style="flex:1; padding:.5rem; border:none; border-radius:8px; font-size:.875rem; font-weight:600; cursor:pointer; transition:all .2s; background:rgba(124,58,237,0.8); color:#fff;">
+                    <i class="bi bi-lock me-1"></i> Mot de passe
+                </button>
+                <button id="tab-passkey" onclick="switchTab('passkey')"
+                    style="flex:1; padding:.5rem; border:none; border-radius:8px; font-size:.875rem; font-weight:600; cursor:pointer; transition:all .2s; background:transparent; color:var(--text-muted);">
+                    <i class="bi bi-fingerprint me-1"></i> Passkey
+                </button>
             </div>
+
+            <!-- Password tab -->
+            <div id="panel-password">
+                <div style="margin-bottom:1rem;">
+                    <label class="label-dark">Email</label>
+                    <input type="email" id="email" class="input-dark form-control"
+                           placeholder="votre@email.com">
+                </div>
+                <div style="margin-bottom:1.5rem;">
+                    <label class="label-dark">Mot de passe</label>
+                    <input type="password" id="password" class="input-dark form-control"
+                           placeholder="••••••••">
+                </div>
+                <button id="btn-login" class="btn-glow btn w-100 btn-lg">
+                    <i class="bi bi-box-arrow-in-right me-2"></i> Se connecter
+                </button>
+            </div>
+
+            <div id="panel-passkey" style="display:none; text-align:center; padding:1rem 0;">
+                <div style="width:70px; height:70px; border-radius:50%; background:var(--accent-gradient-soft); border:1px solid var(--border-hover); display:flex; align-items:center; justify-content:center; margin:0 auto 1.25rem;">
+                    <i class="bi bi-fingerprint" style="font-size:2rem; color:var(--accent-violet);"></i>
+                </div>
+                <p style="color:var(--text-secondary); font-size:.9rem; margin-bottom:1.5rem;">
+                    Utilisez votre empreinte, Face ID ou PIN pour vous connecter instantanément.
+                </p>
+                <button id="btn-passkey" class="btn-glow btn w-100 btn-lg">
+                    <i class="bi bi-fingerprint me-2"></i> Connexion biométrique
+                </button>
+            </div>
+
+            <hr class="divider-glow">
+
+            <p style="text-align:center; color:var(--text-muted); font-size:.875rem; margin:0;">
+                Pas encore de compte ?
+                <a href="{{ path('app_register') }}" style="color:var(--accent-violet); text-decoration:none; font-weight:600;">
+                    Créer un compte
+                </a>
+            </p>
         </div>
     </div>
 </div>
@@ -52,30 +71,62 @@
 <script type="module">
     import { loginWithPassword, loginWithPasskey } from '/js/auth.js';
 
-    const showAlert = (msg, type = 'danger') => {
-        document.getElementById('alert-box').innerHTML =
-            `<div class="alert alert-${type}">${msg}</div>`;
+    window.switchTab = (tab) => {
+        const isPassword = tab === 'password';
+        document.getElementById('panel-password').style.display = isPassword ? 'block' : 'none';
+        document.getElementById('panel-passkey').style.display = isPassword ? 'none' : 'block';
+        document.getElementById('tab-password').style.background = isPassword ? 'rgba(124,58,237,0.8)' : 'transparent';
+        document.getElementById('tab-password').style.color = isPassword ? '#fff' : 'var(--text-muted)';
+        document.getElementById('tab-passkey').style.background = !isPassword ? 'rgba(124,58,237,0.8)' : 'transparent';
+        document.getElementById('tab-passkey').style.color = !isPassword ? '#fff' : 'var(--text-muted)';
     };
 
-    document.getElementById('btn-login').addEventListener('click', async () => {
-        const email = document.getElementById('email').value;
-        const password = document.getElementById('password').value;
-        if (!email || !password) return showAlert('Email et mot de passe requis.');
-        try {
-            await loginWithPassword(email, password);
-            window.location.href = '/events';
-        } catch (e) {
-            showAlert(e.message);
-        }
-    });
+    const showAlert = (msg, type = 'danger') => {
+        const box = document.getElementById('alert-box');
+        box.innerHTML = `<div class="alert-${type}-custom p-3" style="border-radius:10px; font-size:.875rem;">
+            <i class="bi bi-${type === 'success' ? 'check-circle' : 'exclamation-circle'} me-2"></i>${msg}
+        </div>`;
+    };
 
-    document.getElementById('btn-passkey').addEventListener('click', async () => {
-        try {
-            await loginWithPasskey();
-            window.location.href = '/events';
-        } catch (e) {
-            showAlert(e.message);
-        }
+    const setLoading = (btn, loading) => {
+        btn.disabled = loading;
+        btn.innerHTML = loading
+            ? '<span class="spinner-border spinner-border-sm me-2"></span> Connexion...'
+            : btn.dataset.original;
+    };
+
+    document.addEventListener('DOMContentLoaded', () => {
+        const btnLogin = document.getElementById('btn-login');
+        const btnPasskey = document.getElementById('btn-passkey');
+        btnLogin.dataset.original = btnLogin.innerHTML;
+        btnPasskey.dataset.original = btnPasskey.innerHTML;
+
+        btnLogin.addEventListener('click', async () => {
+            const email = document.getElementById('email').value.trim();
+            const password = document.getElementById('password').value;
+            if (!email || !password) return showAlert('Email et mot de passe requis.');
+            setLoading(btnLogin, true);
+            try {
+                await loginWithPassword(email, password);
+                showAlert('Connexion réussie ! Redirection...', 'success');
+                setTimeout(() => window.location.href = '/events', 800);
+            } catch(e) {
+                showAlert(e.message);
+                setLoading(btnLogin, false);
+            }
+        });
+
+        btnPasskey.addEventListener('click', async () => {
+            setLoading(btnPasskey, true);
+            try {
+                await loginWithPasskey();
+                showAlert('Connexion réussie ! Redirection...', 'success');
+                setTimeout(() => window.location.href = '/events', 800);
+            } catch(e) {
+                showAlert(e.message);
+                setLoading(btnPasskey, false);
+            }
+        });
     });
 </script>
 {% endblock %}

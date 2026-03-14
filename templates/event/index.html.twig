@@ -1,67 +1,114 @@
 {% extends 'base.html.twig' %}
-
 {% block title %}Événements{% endblock %}
 
 {% block body %}
-<div class="hero text-white py-5 mb-5">
-    <div class="container text-center">
-        <h1 class="display-4 fw-bold">
-            <i class="bi bi-calendar-event"></i> Événements à venir
+
+<section style="padding: 100px 0 80px; text-align:center; position:relative;">
+    <div class="container">
+        <div class="badge-glow mb-4 d-inline-block">
+            <span class="glow-dot me-2"></span> Événements disponibles
+        </div>
+        <h1 style="font-size:clamp(2.5rem,6vw,4.5rem); font-weight:800; line-height:1.1;" class="mb-4">
+            Découvrez des <span class="text-gradient">expériences</span><br>inoubliables
         </h1>
-        <p class="lead">Découvrez et réservez vos places en quelques clics</p>
+        <p style="font-size:1.15rem; color:var(--text-secondary); max-width:500px; margin:0 auto 2.5rem;">
+            Réservez votre place en quelques secondes. Sécurisé, rapide et sans friction.
+        </p>
+        <div class="d-flex gap-3 justify-content-center flex-wrap">
+            <a href="#events" class="btn-glow btn btn-lg">
+                <i class="bi bi-search me-2"></i> Explorer les événements
+            </a>
+            <a href="{{ path('app_register') }}" class="btn-outline-glow btn btn-lg">
+                <i class="bi bi-person-plus me-2"></i> Créer un compte
+            </a>
+        </div>
+    </div>
+</section>
+
+<div class="container mb-5">
+    <div style="background:var(--bg-card); border:1px solid var(--border-color); border-radius:16px; padding:1.5rem 2rem;">
+        <div class="row text-center g-3">
+            <div class="col-4">
+                <div style="font-size:2rem; font-weight:800;" class="text-gradient">{{ events|length }}</div>
+                <div style="color:var(--text-muted); font-size:.85rem;">Événements</div>
+            </div>
+            <div class="col-4" style="border-left:1px solid var(--border-color); border-right:1px solid var(--border-color);">
+                <div style="font-size:2rem; font-weight:800;" class="text-gradient">100%</div>
+                <div style="color:var(--text-muted); font-size:.85rem;">Sécurisé</div>
+            </div>
+            <div class="col-4">
+                <div style="font-size:2rem; font-weight:800;" class="text-gradient">0€</div>
+                <div style="color:var(--text-muted); font-size:.85rem;">Gratuit</div>
+            </div>
+        </div>
     </div>
 </div>
 
-<div class="container mb-5">
+<section id="events" class="container pb-5">
+    <div class="d-flex align-items-center justify-content-between mb-4">
+        <h2 style="font-weight:700; font-size:1.6rem;">
+            Tous les événements
+            <span class="badge-glow ms-2">{{ events|length }}</span>
+        </h2>
+    </div>
+
     {% if events is empty %}
-        <div class="text-center py-5">
-            <i class="bi bi-calendar-x display-1 text-muted"></i>
-            <p class="lead text-muted mt-3">Aucun événement disponible pour le moment.</p>
-        </div>
+    <div style="text-align:center; padding:80px 0;">
+        <div style="font-size:4rem; margin-bottom:1rem;">◈</div>
+        <p style="color:var(--text-muted); font-size:1.1rem;">Aucun événement disponible pour le moment.</p>
+    </div>
     {% else %}
-        <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
-            {% for event in events %}
-            <div class="col">
-                <div class="card h-100 shadow-sm">
+    <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
+        {% for event in events %}
+        <div class="col">
+            <div class="card-dark h-100 d-flex flex-column">
+                <div style="position:relative; overflow:hidden;">
                     {% if event.image %}
                         <img src="{{ asset('uploads/events/' ~ event.image) }}"
-                             class="card-img-top" alt="{{ event.title }}"
-                             style="height:200px;object-fit:cover">
+                             alt="{{ event.title }}"
+                             style="width:100%; height:200px; object-fit:cover;">
                     {% else %}
-                        <div class="card-img-top bg-secondary d-flex align-items-center justify-content-center"
-                             style="height:200px">
-                            <i class="bi bi-image text-white display-4"></i>
+                        <div style="height:200px; background:var(--accent-gradient-soft); display:flex; align-items:center; justify-content:center;">
+                            <span style="font-size:3rem; opacity:.4;">◈</span>
                         </div>
                     {% endif %}
-                    <div class="card-body d-flex flex-column">
-                        <h5 class="card-title">{{ event.title }}</h5>
-                        <p class="card-text text-muted small">
-                            {{ event.description|slice(0, 120) }}{% if event.description|length > 120 %}...{% endif %}
-                        </p>
-                        <div class="mt-auto">
-                            <p class="mb-1 small">
-                                <i class="bi bi-calendar3 text-primary"></i>
-                                {{ event.date|date('d/m/Y H:i') }}
-                            </p>
-                            <p class="mb-2 small">
-                                <i class="bi bi-geo-alt text-danger"></i>
-                                {{ event.location }}
-                            </p>
-                            <span class="badge bg-success badge-seats">
-                                <i class="bi bi-people"></i> {{ event.seats }} places
-                            </span>
-                        </div>
-                    </div>
-                    <div class="card-footer bg-transparent">
-                        <a href="{{ path('event_show', {id: event.id}) }}"
-                           class="btn btn-primary w-100">
-                            <i class="bi bi-eye"></i> Voir les détails
-                        </a>
+                    <div style="position:absolute; top:12px; right:12px;">
+                        <span class="badge-glow">
+                            <i class="bi bi-people me-1"></i>{{ event.seats }} places
+                        </span>
                     </div>
                 </div>
+
+                <div style="padding:1.25rem; flex:1; display:flex; flex-direction:column;">
+                    <h5 style="font-weight:700; font-size:1.1rem; margin-bottom:.5rem; color:var(--text-primary);">
+                        {{ event.title }}
+                    </h5>
+                    <p style="color:var(--text-muted); font-size:.875rem; line-height:1.6; flex:1;">
+                        {{ event.description|slice(0,110) }}{% if event.description|length > 110 %}…{% endif %}
+                    </p>
+
+                    <hr class="divider-glow">
+
+                    <div class="d-flex flex-column gap-1 mb-3">
+                        <span style="font-size:.8rem; color:var(--text-secondary);">
+                            <i class="bi bi-calendar3 me-2" style="color:var(--accent-purple);"></i>
+                            {{ event.date|date('d MMM Y · H:i') }}
+                        </span>
+                        <span style="font-size:.8rem; color:var(--text-secondary);">
+                            <i class="bi bi-geo-alt me-2" style="color:var(--accent-pink);"></i>
+                            {{ event.location }}
+                        </span>
+                    </div>
+
+                    <a href="{{ path('event_show', {id: event.id}) }}" class="btn-glow btn w-100">
+                        Voir les détails <i class="bi bi-arrow-right ms-1"></i>
+                    </a>
+                </div>
             </div>
-            {% endfor %}
         </div>
+        {% endfor %}
+    </div>
     {% endif %}
-</div>
+</section>
+
 {% endblock %}
