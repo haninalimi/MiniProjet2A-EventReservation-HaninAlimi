@@ -1,103 +1,337 @@
 {% extends 'base.html.twig' %}
-{% block title %}{{ event.title }}{% endblock %}
+{% block title %}{{ event.title }} — EventApp{% endblock %}
+
+{% block stylesheets %}
+<style>
+.show-page { padding: 3rem 6% 6rem; background: var(--bg); transition: background .4s; }
+
+.breadcrumb-lux {
+    display: flex;
+    align-items: center;
+    gap: .6rem;
+    margin-bottom: 3rem;
+    font-family: 'Space Mono', monospace;
+    font-size: .5rem;
+    letter-spacing: .15em;
+    text-transform: uppercase;
+}
+.breadcrumb-lux a { color: var(--text3); text-decoration: none; transition: color .2s; }
+.breadcrumb-lux a:hover { color: var(--or); }
+.breadcrumb-lux .sep { color: var(--or); opacity: .4; }
+.breadcrumb-lux .current { color: var(--text2); }
+
+.show-grid {
+    display: grid;
+    grid-template-columns: 1fr 360px;
+    gap: 4rem;
+    align-items: start;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.show-img-wrap {
+    border-radius: 3px;
+    overflow: hidden;
+    margin-bottom: 2.5rem;
+    border: 1px solid var(--border);
+    position: relative;
+}
+.show-img-wrap img { width: 100%; max-height: 440px; object-fit: cover; display: block; }
+.show-img-placeholder {
+    height: 320px;
+    background: linear-gradient(135deg, #1a1408, #2a1f10);
+    display: flex; align-items: center; justify-content: center;
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 5rem; color: rgba(197,165,114,0.08);
+}
+
+.show-tags {
+    display: flex;
+    gap: .6rem;
+    flex-wrap: wrap;
+    margin-bottom: 1.25rem;
+}
+.show-tag {
+    font-family: 'Space Mono', monospace;
+    font-size: .5rem;
+    letter-spacing: .14em;
+    text-transform: uppercase;
+    color: var(--or);
+    border: 1px solid rgba(197,165,114,0.3);
+    padding: .3rem .7rem;
+    border-radius: 2px;
+    display: flex;
+    align-items: center;
+    gap: .35rem;
+}
+
+.show-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: clamp(2rem, 4vw, 3rem);
+    font-weight: 300;
+    line-height: 1.1;
+    letter-spacing: -.01em;
+    color: var(--text);
+    margin-bottom: 1.5rem;
+}
+.show-title em { font-style: italic; color: var(--or); }
+
+.show-divider {
+    height: 1px;
+    background: linear-gradient(90deg, var(--or) 0%, transparent 60%);
+    margin: 1.5rem 0;
+    opacity: .3;
+}
+
+.show-desc {
+    font-size: .9rem;
+    font-weight: 300;
+    color: var(--text2);
+    line-height: 1.9;
+}
+
+.show-card {
+    position: sticky;
+    top: 88px;
+    background: var(--glass);
+    backdrop-filter: blur(40px);
+    border: 1px solid var(--glass-border);
+    border-radius: 3px;
+    overflow: hidden;
+}
+
+.show-card-header {
+    padding: 1.5rem 1.5rem 1rem;
+    border-bottom: 1px solid var(--border);
+}
+.show-card-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.25rem;
+    font-weight: 400;
+    color: var(--text);
+    margin-bottom: .25rem;
+}
+.show-card-sub {
+    font-family: 'Space Mono', monospace;
+    font-size: .48rem;
+    letter-spacing: .18em;
+    text-transform: uppercase;
+    color: var(--or);
+}
+
+.show-card-body { padding: 1.5rem; }
+
+.info-row {
+    display: flex;
+    gap: .85rem;
+    align-items: flex-start;
+    padding: .9rem 0;
+    border-bottom: 1px solid var(--border);
+}
+.info-row:last-of-type { border-bottom: none; }
+.info-icon {
+    width: 32px; height: 32px;
+    border-radius: 2px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: .9rem;
+    flex-shrink: 0;
+    background: rgba(197,165,114,0.08);
+    border: 1px solid rgba(197,165,114,0.15);
+}
+.info-icon i { color: var(--or); }
+.info-lbl {
+    font-family: 'Space Mono', monospace;
+    font-size: .44rem;
+    letter-spacing: .14em;
+    text-transform: uppercase;
+    color: var(--text3);
+    margin-bottom: .2rem;
+}
+.info-val {
+    font-size: .82rem;
+    font-weight: 400;
+    color: var(--text);
+}
+
+.seats-section { padding: 1.25rem 0 1.5rem; border-bottom: 1px solid var(--border); }
+.seats-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    margin-bottom: .6rem;
+}
+.seats-label {
+    font-family: 'Space Mono', monospace;
+    font-size: .48rem;
+    letter-spacing: .14em;
+    text-transform: uppercase;
+    color: var(--text3);
+}
+.seats-count {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.1rem;
+    font-weight: 300;
+    color: var(--or);
+}
+.seats-track {
+    height: 3px;
+    background: rgba(197,165,114,0.1);
+    border-radius: 2px;
+    overflow: hidden;
+}
+.seats-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--or), var(--or3));
+    border-radius: 2px;
+    transition: width .5s;
+}
+
+.show-card-cta { padding: 1.25rem 1.5rem; }
+
+.btn-reserve-full {
+    display: block;
+    width: 100%;
+    text-align: center;
+    background: var(--or) !important;
+    color: var(--bg) !important;
+    border: none;
+    padding: .9rem 1.5rem;
+    font-family: 'Space Mono', monospace;
+    font-size: .6rem;
+    letter-spacing: .14em;
+    text-transform: uppercase;
+    cursor: pointer;
+    border-radius: 2px;
+    transition: all .3s;
+    text-decoration: none !important;
+}
+.btn-reserve-full:hover { background: var(--or3) !important; transform: translateY(-2px); box-shadow: 0 8px 24px rgba(197,165,114,0.3); }
+
+.btn-complet {
+    display: block;
+    width: 100%;
+    text-align: center;
+    background: transparent;
+    color: var(--text3) !important;
+    border: 1px solid var(--border);
+    padding: .9rem 1.5rem;
+    font-family: 'Space Mono', monospace;
+    font-size: .6rem;
+    letter-spacing: .14em;
+    text-transform: uppercase;
+    border-radius: 2px;
+    cursor: not-allowed;
+}
+
+@media (max-width: 900px) {
+    .show-grid { grid-template-columns: 1fr; }
+    .show-card { position: static; }
+}
+</style>
+{% endblock %}
 
 {% block body %}
-<div class="container py-5">
 
-    <nav style="margin-bottom:2rem;">
-        <a href="{{ path('event_index') }}" style="color:var(--text-muted); text-decoration:none; font-size:.875rem;">
-            <i class="bi bi-arrow-left me-1"></i> Événements
-        </a>
-        <span style="color:var(--text-muted); margin:0 .5rem;">/</span>
-        <span style="color:var(--text-secondary); font-size:.875rem;">{{ event.title }}</span>
+<section class="show-page">
+
+    <nav class="breadcrumb-lux">
+        <a href="{{ path('event_index') }}">← Événements</a>
+        <span class="sep">◈</span>
+        <span class="current">{{ event.title|slice(0,40) }}{% if event.title|length > 40 %}…{% endif %}</span>
     </nav>
 
-    <div class="row g-5">
-        <div class="col-lg-8">
+    <div class="show-grid">
+
+        <div>
             {% if event.image %}
-            <div style="border-radius:20px; overflow:hidden; margin-bottom:2rem; border:1px solid var(--border-color);">
-                <img src="{{ asset('uploads/events/' ~ event.image) }}"
-                     alt="{{ event.title }}"
-                     style="width:100%; max-height:420px; object-fit:cover;">
+            <div class="show-img-wrap">
+                <img src="{{ asset('uploads/events/' ~ event.image) }}" alt="{{ event.title }}">
+            </div>
+            {% else %}
+            <div class="show-img-wrap">
+                <div class="show-img-placeholder">✦</div>
             </div>
             {% endif %}
 
-            <h1 style="font-size:2.2rem; font-weight:800; margin-bottom:1rem;">
-                {{ event.title }}
-            </h1>
-
-            <div class="d-flex gap-2 flex-wrap mb-4">
-                <span class="badge-glow">
-                    <i class="bi bi-calendar3 me-1"></i>
+            <div class="show-tags">
+                <span class="show-tag">
+                    <i class="bi bi-calendar3"></i>
                     {{ event.date|date('d/m/Y à H:i') }}
                 </span>
-                <span class="badge-glow">
-                    <i class="bi bi-geo-alt me-1"></i>
+                <span class="show-tag">
+                    <i class="bi bi-geo-alt"></i>
                     {{ event.location }}
                 </span>
-                <span class="badge-glow">
-                    <i class="bi bi-people me-1"></i>
+                <span class="show-tag">
+                    <i class="bi bi-people"></i>
                     {{ event.seats - reservationCount }} / {{ event.seats }} places
                 </span>
             </div>
 
-            <hr class="divider-glow">
+            <h1 class="show-title">{{ event.title }}</h1>
 
-            <div style="color:var(--text-secondary); line-height:1.8; font-size:1.05rem;">
-                {{ event.description }}
-            </div>
+            <div class="show-divider"></div>
+
+            <p class="show-desc">{{ event.description }}</p>
         </div>
 
-        <div class="col-lg-4">
-            <div style="position:sticky; top:90px;">
-                <div class="card-dark p-4">
-                    <h5 style="font-weight:700; margin-bottom:1.5rem;">
-                        <span class="text-gradient">Réserver ma place</span>
-                    </h5>
+        <div>
+            <div class="show-card">
+                <div class="show-card-header">
+                    <div class="show-card-title">Réserver ma place</div>
+                    <div class="show-card-sub">Confirmation instantanée</div>
+                </div>
+                <div class="show-card-body">
 
                     {% set pct = ((event.seats - reservationCount) / event.seats * 100)|round %}
-                    <div style="margin-bottom:1.5rem;">
-                        <div class="d-flex justify-content-between mb-1">
-                            <span style="font-size:.8rem; color:var(--text-muted);">Places disponibles</span>
-                            <span style="font-size:.8rem; color:var(--accent-violet); font-weight:600;">
-                                {{ event.seats - reservationCount }} / {{ event.seats }}
-                            </span>
+                    <div class="seats-section">
+                        <div class="seats-header">
+                            <span class="seats-label">Places disponibles</span>
+                            <span class="seats-count">{{ event.seats - reservationCount }} / {{ event.seats }}</span>
                         </div>
-                        <div style="height:6px; background:rgba(255,255,255,.07); border-radius:3px; overflow:hidden;">
-                            <div style="height:100%; width:{{ pct }}%; background:var(--accent-gradient); border-radius:3px; transition:width .3s;"></div>
+                        <div class="seats-track">
+                            <div class="seats-fill" style="width:{{ pct }}%;"></div>
                         </div>
                     </div>
 
-                    <div class="d-flex flex-column gap-2 mb-4">
-                        <div style="display:flex; gap:.75rem; align-items:center; padding:.75rem; background:rgba(124,58,237,0.07); border-radius:10px;">
-                            <i class="bi bi-calendar3" style="color:var(--accent-purple); font-size:1.1rem;"></i>
-                            <div>
-                                <div style="font-size:.7rem; color:var(--text-muted);">Date</div>
-                                <div style="font-size:.875rem; font-weight:500;">{{ event.date|date('d/m/Y à H:i') }}</div>
-                            </div>
+                    <div class="info-row">
+                        <div class="info-icon"><i class="bi bi-calendar3"></i></div>
+                        <div>
+                            <div class="info-lbl">Date</div>
+                            <div class="info-val">{{ event.date|date('d/m/Y à H:i') }}</div>
                         </div>
-                        <div style="display:flex; gap:.75rem; align-items:center; padding:.75rem; background:rgba(236,72,153,0.07); border-radius:10px;">
-                            <i class="bi bi-geo-alt" style="color:var(--accent-pink); font-size:1.1rem;"></i>
-                            <div>
-                                <div style="font-size:.7rem; color:var(--text-muted);">Lieu</div>
-                                <div style="font-size:.875rem; font-weight:500;">{{ event.location }}</div>
-                            </div>
+                    </div>
+                    <div class="info-row">
+                        <div class="info-icon"><i class="bi bi-geo-alt"></i></div>
+                        <div>
+                            <div class="info-lbl">Lieu</div>
+                            <div class="info-val">{{ event.location }}</div>
+                        </div>
+                    </div>
+                    <div class="info-row" style="border-bottom:none;">
+                        <div class="info-icon"><i class="bi bi-shield-check"></i></div>
+                        <div>
+                            <div class="info-lbl">Sécurité</div>
+                            <div class="info-val">Passkey + JWT</div>
                         </div>
                     </div>
 
+                </div>
+                <div class="show-card-cta">
                     {% if event.seats - reservationCount > 0 %}
-                        <a href="{{ path('event_reserve', {id: event.id}) }}" class="btn-glow btn w-100 btn-lg">
-                            <i class="bi bi-ticket-perforated me-2"></i> Réserver maintenant
+                        <a href="{{ path('event_reserve', {id: event.id}) }}" class="btn-reserve-full">
+                            <i class="bi bi-ticket-perforated"></i> &nbsp; Réserver maintenant
                         </a>
                     {% else %}
-                        <button class="btn w-100 btn-lg" disabled
-                            style="background:rgba(255,255,255,.05); border:1px solid var(--border-color); color:var(--text-muted); border-radius:12px;">
-                            <i class="bi bi-x-circle me-2"></i> Complet
-                        </button>
+                        <div class="btn-complet">
+                            <i class="bi bi-x-circle"></i> &nbsp; Événement complet
+                        </div>
                     {% endif %}
                 </div>
             </div>
         </div>
+
     </div>
-</div>
+</section>
+
 {% endblock %}

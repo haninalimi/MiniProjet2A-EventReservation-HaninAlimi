@@ -1,129 +1,514 @@
 {% extends 'base.html.twig' %}
+
 {% block title %}Connexion{% endblock %}
 
-{% block body %}
-<div style="min-height:calc(100vh - 80px); display:flex; align-items:center; justify-content:center; padding:2rem 1rem;">
-    <div style="width:100%; max-width:420px;">
+{% block stylesheets %}
+    {{ parent() }}
+    <style>
+        .auth-page {
+            min-height: calc(100vh - 80px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 2rem 1rem;
+            position: relative;
+            overflow: hidden;
+        }
 
-        <div style="text-align:center; margin-bottom:2.5rem;">
-            <div style="font-size:2.5rem; font-weight:900;" class="text-gradient">◈</div>
-            <h2 style="font-weight:800; margin-top:.5rem;">Bon retour !</h2>
-            <p style="color:var(--text-muted); font-size:.9rem;">Connectez-vous à votre compte</p>
+        .auth-page::before {
+            content: '';
+            position: absolute;
+            width: 600px;
+            height: 600px;
+            background: radial-gradient(circle, rgba(197, 165, 114, 0.03) 0%, transparent 70%);
+            top: -200px;
+            right: -200px;
+            border-radius: 50%;
+            animation: float 20s ease-in-out infinite;
+        }
+
+        .auth-page::after {
+            content: '';
+            position: absolute;
+            width: 500px;
+            height: 500px;
+            background: radial-gradient(circle, rgba(197, 165, 114, 0.02) 0%, transparent 70%);
+            bottom: -200px;
+            left: -200px;
+            border-radius: 50%;
+            animation: float 15s ease-in-out infinite reverse;
+        }
+
+        .auth-container {
+            width: 100%;
+            max-width: 450px;
+            position: relative;
+            z-index: 2;
+        }
+
+        .auth-header {
+            text-align: center;
+            margin-bottom: 2.5rem;
+        }
+
+        .auth-icon {
+            font-size: 3rem;
+            color: var(--gold-rolls);
+            margin-bottom: 1rem;
+            opacity: 0.8;
+            animation: pulse 2s infinite;
+        }
+
+        .auth-title {
+            font-size: 2rem;
+            font-weight: 300;
+            letter-spacing: 4px;
+            text-transform: uppercase;
+            margin-bottom: 0.5rem;
+        }
+
+        .auth-subtitle {
+            color: var(--silver);
+            font-size: 0.9rem;
+            letter-spacing: 1px;
+        }
+
+        .auth-card {
+            background: var(--glass);
+            backdrop-filter: blur(10px);
+            border: 1px solid var(--glass-border);
+            padding: 2.5rem;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .auth-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, var(--gold-rolls), transparent);
+        }
+
+        .auth-tabs {
+            display: flex;
+            background: rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(197, 165, 114, 0.2);
+            margin-bottom: 2rem;
+            position: relative;
+        }
+
+        .auth-tab {
+            flex: 1;
+            padding: 0.8rem;
+            border: none;
+            font-size: 0.9rem;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            background: transparent;
+            color: var(--silver);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .auth-tab.active {
+            background: rgba(197, 165, 114, 0.15);
+            color: var(--gold-rolls);
+        }
+
+        .auth-tab.active::before {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: var(--gold-rolls);
+            animation: slideIn 0.3s ease;
+        }
+
+        @keyframes slideIn {
+            from { transform: scaleX(0); }
+            to { transform: scaleX(1); }
+        }
+
+        .auth-tab i {
+            margin-right: 0.5rem;
+        }
+
+        .auth-panel {
+            animation: fadeIn 0.5s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .auth-field {
+            margin-bottom: 1.5rem;
+        }
+
+        .auth-label {
+            display: block;
+            color: var(--silver);
+            font-size: 0.8rem;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            margin-bottom: 0.5rem;
+        }
+
+        .auth-input {
+            width: 100%;
+            background: rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(197, 165, 114, 0.2);
+            color: white;
+            padding: 0.8rem 1rem;
+            transition: all 0.3s ease;
+            font-size: 0.95rem;
+        }
+
+        .auth-input:focus {
+            outline: none;
+            border-color: var(--gold-rolls);
+            box-shadow: 0 0 20px rgba(197, 165, 114, 0.1);
+            background: rgba(0, 0, 0, 0.5);
+        }
+
+        .auth-input::placeholder {
+            color: #666;
+            font-style: italic;
+        }
+
+        .passkey-panel {
+            text-align: center;
+            padding: 1rem 0;
+        }
+
+        .passkey-icon {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            border: 2px solid rgba(197, 165, 114, 0.3);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 1.5rem;
+            animation: pulse 2s infinite;
+        }
+
+        .passkey-icon i {
+            font-size: 2.5rem;
+            color: var(--gold-rolls);
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); opacity: 0.8; }
+            50% { transform: scale(1.05); opacity: 1; }
+        }
+
+        .passkey-description {
+            color: var(--silver);
+            font-size: 0.9rem;
+            line-height: 1.6;
+            margin-bottom: 2rem;
+        }
+
+        .auth-button {
+            width: 100%;
+            padding: 0.9rem;
+            background: transparent;
+            border: 1px solid var(--gold-rolls);
+            color: var(--gold-rolls);
+            font-size: 0.95rem;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .auth-button::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(197, 165, 114, 0.2), transparent);
+            transition: left 0.5s ease;
+        }
+
+        .auth-button:hover {
+            background: var(--gold-rolls);
+            color: var(--black-deep);
+        }
+
+        .auth-button:hover::before {
+            left: 100%;
+        }
+
+        .auth-button i {
+            margin-right: 0.5rem;
+        }
+
+        .auth-divider {
+            margin: 2rem 0;
+            position: relative;
+            text-align: center;
+        }
+
+        .auth-divider::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 0;
+            right: 0;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, var(--gold-rolls), transparent);
+        }
+
+        .auth-divider span {
+            background: var(--black-mat);
+            padding: 0 1rem;
+            color: var(--silver);
+            font-size: 0.8rem;
+            letter-spacing: 1px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .auth-footer {
+            text-align: center;
+            color: var(--silver);
+            font-size: 0.9rem;
+        }
+
+        .auth-link {
+            color: var(--gold-rolls);
+            text-decoration: none;
+            transition: all 0.3s ease;
+            position: relative;
+            padding-bottom: 2px;
+        }
+
+        .auth-link::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 1px;
+            background: var(--gold-rolls);
+            transform: scaleX(0);
+            transition: transform 0.3s ease;
+        }
+
+        .auth-link:hover {
+            color: var(--gold-light);
+        }
+
+        .auth-link:hover::after {
+            transform: scaleX(1);
+        }
+
+        .alert-message {
+            background: rgba(197, 165, 114, 0.1);
+            border: 1px solid rgba(197, 165, 114, 0.3);
+            color: var(--gold-light);
+            padding: 1rem;
+            margin-bottom: 1.5rem;
+            font-size: 0.9rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            animation: slideInDown 0.3s ease;
+        }
+
+        @keyframes slideInDown {
+            from { transform: translateY(-20px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+
+        .alert-message i {
+            font-size: 1.1rem;
+        }
+
+        .alert-success {
+            background: rgba(16, 185, 129, 0.1);
+            border-color: rgba(16, 185, 129, 0.3);
+            color: #6ee7b7;
+        }
+
+        .spinner {
+            display: inline-block;
+            width: 1rem;
+            height: 1rem;
+            border: 2px solid rgba(197, 165, 114, 0.3);
+            border-top-color: var(--gold-rolls);
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+            margin-right: 0.5rem;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+    </style>
+{% endblock %}
+
+{% block body %}
+<div class="auth-page">
+    <div class="auth-container">
+        <div class="auth-header">
+            <div class="auth-icon">◈</div>
+            <h1 class="auth-title">Connexion</h1>
+            <p class="auth-subtitle">Connectez-vous à votre collection</p>
         </div>
 
-        <div class="card-dark p-4">
-            <div id="alert-box" style="margin-bottom:1rem;"></div>
+        <div class="auth-card">
+            <div id="alert-box"></div>
 
-            <div style="display:flex; background:rgba(255,255,255,.04); border-radius:10px; padding:4px; margin-bottom:1.5rem;">
-                <button id="tab-password" onclick="switchTab('password')"
-                    style="flex:1; padding:.5rem; border:none; border-radius:8px; font-size:.875rem; font-weight:600; cursor:pointer; transition:all .2s; background:rgba(124,58,237,0.8); color:#fff;">
-                    <i class="bi bi-lock me-1"></i> Mot de passe
+            <div class="auth-tabs">
+                <button id="tab-password" class="auth-tab active" onclick="switchTab('password')">
+                    <i class="bi bi-lock"></i> Mot de passe
                 </button>
-                <button id="tab-passkey" onclick="switchTab('passkey')"
-                    style="flex:1; padding:.5rem; border:none; border-radius:8px; font-size:.875rem; font-weight:600; cursor:pointer; transition:all .2s; background:transparent; color:var(--text-muted);">
-                    <i class="bi bi-fingerprint me-1"></i> Passkey
+                <button id="tab-passkey" class="auth-tab" onclick="switchTab('passkey')">
+                    <i class="bi bi-fingerprint"></i> Passkey
                 </button>
             </div>
 
-            <!-- Password tab -->
-            <div id="panel-password">
-                <div style="margin-bottom:1rem;">
-                    <label class="label-dark">Email</label>
-                    <input type="email" id="email" class="input-dark form-control"
-                           placeholder="votre@email.com">
+            <div id="panel-password" class="auth-panel">
+                <div class="auth-field">
+                    <label class="auth-label">Email</label>
+                    <input type="email" id="email" class="auth-input" 
+                           placeholder="votre@email.com" autocomplete="email">
                 </div>
-                <div style="margin-bottom:1.5rem;">
-                    <label class="label-dark">Mot de passe</label>
-                    <input type="password" id="password" class="input-dark form-control"
-                           placeholder="••••••••">
+                <div class="auth-field">
+                    <label class="auth-label">Mot de passe</label>
+                    <input type="password" id="password" class="auth-input" 
+                           placeholder="••••••••" autocomplete="current-password">
                 </div>
-                <button id="btn-login" class="btn-glow btn w-100 btn-lg">
-                    <i class="bi bi-box-arrow-in-right me-2"></i> Se connecter
+                <button id="btn-login" class="auth-button">
+                    <i class="bi bi-box-arrow-in-right"></i>
+                    <span>Se connecter</span>
                 </button>
             </div>
 
-            <div id="panel-passkey" style="display:none; text-align:center; padding:1rem 0;">
-                <div style="width:70px; height:70px; border-radius:50%; background:var(--accent-gradient-soft); border:1px solid var(--border-hover); display:flex; align-items:center; justify-content:center; margin:0 auto 1.25rem;">
-                    <i class="bi bi-fingerprint" style="font-size:2rem; color:var(--accent-violet);"></i>
+            <div id="panel-passkey" class="auth-panel" style="display: none;">
+                <div class="passkey-panel">
+                    <div class="passkey-icon">
+                        <i class="bi bi-fingerprint"></i>
+                    </div>
+                    <p class="passkey-description">
+                        Utilisez votre empreinte digitale, Face ID ou PIN pour une connexion instantanée et sécurisée.
+                    </p>
+                    <button id="btn-passkey" class="auth-button">
+                        <i class="bi bi-fingerprint"></i>
+                        <span>Connexion biométrique</span>
+                    </button>
                 </div>
-                <p style="color:var(--text-secondary); font-size:.9rem; margin-bottom:1.5rem;">
-                    Utilisez votre empreinte, Face ID ou PIN pour vous connecter instantanément.
-                </p>
-                <button id="btn-passkey" class="btn-glow btn w-100 btn-lg">
-                    <i class="bi bi-fingerprint me-2"></i> Connexion biométrique
-                </button>
             </div>
 
-            <hr class="divider-glow">
+            <div class="auth-divider">
+                <span>OU</span>
+            </div>
 
-            <p style="text-align:center; color:var(--text-muted); font-size:.875rem; margin:0;">
-                Pas encore de compte ?
-                <a href="{{ path('app_register') }}" style="color:var(--accent-violet); text-decoration:none; font-weight:600;">
-                    Créer un compte
+            <div class="auth-footer">
+                <span>Première visite ? </span>
+                <a href="{{ path('app_register') }}" class="auth-link">
+                    Créer un compte <i class="bi bi-arrow-right ms-1"></i>
                 </a>
-            </p>
+            </div>
         </div>
     </div>
 </div>
 {% endblock %}
 
 {% block javascripts %}
+{{ parent() }}
 <script type="module">
     import { loginWithPassword, loginWithPasskey } from '/js/auth.js';
 
     window.switchTab = (tab) => {
         const isPassword = tab === 'password';
+        
         document.getElementById('panel-password').style.display = isPassword ? 'block' : 'none';
         document.getElementById('panel-passkey').style.display = isPassword ? 'none' : 'block';
-        document.getElementById('tab-password').style.background = isPassword ? 'rgba(124,58,237,0.8)' : 'transparent';
-        document.getElementById('tab-password').style.color = isPassword ? '#fff' : 'var(--text-muted)';
-        document.getElementById('tab-passkey').style.background = !isPassword ? 'rgba(124,58,237,0.8)' : 'transparent';
-        document.getElementById('tab-passkey').style.color = !isPassword ? '#fff' : 'var(--text-muted)';
+        
+        const tabPassword = document.getElementById('tab-password');
+        const tabPasskey = document.getElementById('tab-passkey');
+        
+        if (isPassword) {
+            tabPassword.classList.add('active');
+            tabPasskey.classList.remove('active');
+        } else {
+            tabPassword.classList.remove('active');
+            tabPasskey.classList.add('active');
+        }
     };
 
-    const showAlert = (msg, type = 'danger') => {
-        const box = document.getElementById('alert-box');
-        box.innerHTML = `<div class="alert-${type}-custom p-3" style="border-radius:10px; font-size:.875rem;">
-            <i class="bi bi-${type === 'success' ? 'check-circle' : 'exclamation-circle'} me-2"></i>${msg}
-        </div>`;
+    const showAlert = (message, type = 'error') => {
+        const alertBox = document.getElementById('alert-box');
+        const icon = type === 'success' ? 'check-circle' : 'exclamation-circle';
+        alertBox.innerHTML = `
+            <div class="alert-message alert-${type === 'success' ? 'success' : ''}">
+                <i class="bi bi-${icon}"></i>
+                ${message}
+            </div>
+        `;
     };
 
-    const setLoading = (btn, loading) => {
-        btn.disabled = loading;
-        btn.innerHTML = loading
-            ? '<span class="spinner-border spinner-border-sm me-2"></span> Connexion...'
-            : btn.dataset.original;
+    const setLoading = (button, isLoading) => {
+        const originalContent = button.innerHTML;
+        if (isLoading) {
+            button.disabled = true;
+            button.innerHTML = '<span class="spinner"></span> Connexion...';
+        } else {
+            button.disabled = false;
+            button.innerHTML = originalContent;
+        }
     };
 
     document.addEventListener('DOMContentLoaded', () => {
         const btnLogin = document.getElementById('btn-login');
         const btnPasskey = document.getElementById('btn-passkey');
-        btnLogin.dataset.original = btnLogin.innerHTML;
-        btnPasskey.dataset.original = btnPasskey.innerHTML;
 
         btnLogin.addEventListener('click', async () => {
             const email = document.getElementById('email').value.trim();
             const password = document.getElementById('password').value;
-            if (!email || !password) return showAlert('Email et mot de passe requis.');
+
+            if (!email || !password) {
+                showAlert('Veuillez remplir tous les champs');
+                return;
+            }
+
             setLoading(btnLogin, true);
+            
             try {
                 await loginWithPassword(email, password);
                 showAlert('Connexion réussie ! Redirection...', 'success');
-                setTimeout(() => window.location.href = '/events', 800);
-            } catch(e) {
-                showAlert(e.message);
+                setTimeout(() => window.location.href = '/events', 1000);
+            } catch (error) {
+                showAlert(error.message || 'Erreur de connexion');
                 setLoading(btnLogin, false);
             }
         });
 
         btnPasskey.addEventListener('click', async () => {
             setLoading(btnPasskey, true);
+            
             try {
                 await loginWithPasskey();
                 showAlert('Connexion réussie ! Redirection...', 'success');
-                setTimeout(() => window.location.href = '/events', 800);
-            } catch(e) {
-                showAlert(e.message);
+                setTimeout(() => window.location.href = '/events', 1000);
+            } catch (error) {
+                showAlert(error.message || 'Erreur de connexion biométrique');
                 setLoading(btnPasskey, false);
             }
         });

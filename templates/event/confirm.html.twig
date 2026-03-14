@@ -1,83 +1,214 @@
 {% extends 'base.html.twig' %}
-{% block title %}Réservation confirmée !{% endblock %}
+{% block title %}Réservation confirmée — EventApp{% endblock %}
 
-{% block body %}
-<div class="container py-5">
-    <div class="row justify-content-center">
-        <div class="col-lg-6 text-center">
-
-            <div style="margin-bottom:2rem;">
-                <div style="width:100px; height:100px; border-radius:50%; background:var(--accent-gradient-soft); border:2px solid rgba(124,58,237,0.4); display:flex; align-items:center; justify-content:center; margin:0 auto 1.5rem; animation: pulse 2s ease-in-out infinite;">
-                    <i class="bi bi-check-lg" style="font-size:2.5rem; color:var(--accent-violet);"></i>
-                </div>
-                <h1 style="font-size:2.2rem; font-weight:800; margin-bottom:.5rem;">
-                    <span class="text-gradient">Réservation confirmée !</span>
-                </h1>
-                <p style="color:var(--text-secondary);">
-                    Merci <strong style="color:var(--text-primary);">{{ reservation.name }}</strong>,
-                    votre place est réservée.
-                </p>
-            </div>
-
-            <div class="card-dark p-4 text-start mb-4">
-                <h6 style="color:var(--text-muted); text-transform:uppercase; letter-spacing:.1em; font-size:.75rem; margin-bottom:1.25rem;">
-                    Détails de la réservation
-                </h6>
-
-                <div class="d-flex flex-column gap-3">
-                    <div style="display:flex; gap:.75rem; align-items:center;">
-                        <div style="width:36px; height:36px; border-radius:8px; background:rgba(124,58,237,0.15); display:flex; align-items:center; justify-content:center; flex-shrink:0;">
-                            <i class="bi bi-calendar3" style="color:var(--accent-purple);"></i>
-                        </div>
-                        <div>
-                            <div style="font-size:.75rem; color:var(--text-muted);">Événement</div>
-                            <div style="font-weight:600;">{{ reservation.event.title }}</div>
-                        </div>
-                    </div>
-
-                    <div style="display:flex; gap:.75rem; align-items:center;">
-                        <div style="width:36px; height:36px; border-radius:8px; background:rgba(236,72,153,0.15); display:flex; align-items:center; justify-content:center; flex-shrink:0;">
-                            <i class="bi bi-clock" style="color:var(--accent-pink);"></i>
-                        </div>
-                        <div>
-                            <div style="font-size:.75rem; color:var(--text-muted);">Date</div>
-                            <div style="font-weight:600;">{{ reservation.event.date|date('d/m/Y à H:i') }}</div>
-                        </div>
-                    </div>
-
-                    <div style="display:flex; gap:.75rem; align-items:center;">
-                        <div style="width:36px; height:36px; border-radius:8px; background:rgba(124,58,237,0.15); display:flex; align-items:center; justify-content:center; flex-shrink:0;">
-                            <i class="bi bi-geo-alt" style="color:var(--accent-purple);"></i>
-                        </div>
-                        <div>
-                            <div style="font-size:.75rem; color:var(--text-muted);">Lieu</div>
-                            <div style="font-weight:600;">{{ reservation.event.location }}</div>
-                        </div>
-                    </div>
-
-                    <div style="display:flex; gap:.75rem; align-items:center;">
-                        <div style="width:36px; height:36px; border-radius:8px; background:rgba(16,185,129,0.15); display:flex; align-items:center; justify-content:center; flex-shrink:0;">
-                            <i class="bi bi-envelope" style="color:#10b981;"></i>
-                        </div>
-                        <div>
-                            <div style="font-size:.75rem; color:var(--text-muted);">Email</div>
-                            <div style="font-weight:600;">{{ reservation.email }}</div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <a href="{{ path('event_index') }}" class="btn-glow btn btn-lg w-100">
-                <i class="bi bi-arrow-left me-2"></i> Retour aux événements
-            </a>
-        </div>
-    </div>
-</div>
-
+{% block stylesheets %}
 <style>
-@keyframes pulse {
-    0%,100% { box-shadow: 0 0 0 0 rgba(124,58,237,0.3); }
-    50% { box-shadow: 0 0 0 20px rgba(124,58,237,0); }
+.confirm-page {
+    min-height: calc(100vh - 68px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 3rem 1.5rem;
+    background: var(--bg);
+    transition: background .4s;
+}
+
+.confirm-wrap {
+    width: 100%;
+    max-width: 500px;
+    text-align: center;
+}
+
+.confirm-mark {
+    width: 90px; height: 90px;
+    border-radius: 50%;
+    background: rgba(197,165,114,0.08);
+    border: 1px solid rgba(197,165,114,0.3);
+    display: flex; align-items: center; justify-content: center;
+    margin: 0 auto 2rem;
+    position: relative;
+    animation: markIn .8s cubic-bezier(.23,1,.32,1) forwards;
+}
+.confirm-mark::before {
+    content: '';
+    position: absolute; inset: -8px;
+    border-radius: 50%;
+    border: 1px solid rgba(197,165,114,0.12);
+    animation: ringPulse 3s ease-in-out infinite;
+}
+.confirm-mark::after {
+    content: '';
+    position: absolute; inset: -16px;
+    border-radius: 50%;
+    border: 1px solid rgba(197,165,114,0.06);
+    animation: ringPulse 3s ease-in-out infinite .5s;
+}
+.confirm-mark i {
+    font-size: 2.2rem;
+    color: var(--or);
+}
+
+@keyframes markIn {
+    from { transform: scale(0.5); opacity: 0; }
+    to { transform: scale(1); opacity: 1; }
+}
+@keyframes ringPulse {
+    0%,100% { transform: scale(1); opacity: 1; }
+    50% { transform: scale(1.08); opacity: .4; }
+}
+
+.confirm-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 2.2rem;
+    font-weight: 300;
+    color: var(--text);
+    margin-bottom: .5rem;
+}
+.confirm-title em { font-style: italic; color: var(--or); }
+
+.confirm-sub {
+    font-size: .85rem;
+    font-weight: 300;
+    color: var(--text2);
+    margin-bottom: 2.5rem;
+    line-height: 1.7;
+}
+.confirm-sub strong { color: var(--text); font-weight: 500; }
+
+.confirm-card {
+    background: var(--glass);
+    backdrop-filter: blur(40px);
+    border: 1px solid var(--glass-border);
+    border-radius: 3px;
+    padding: 1.75rem;
+    margin-bottom: 2rem;
+    text-align: left;
+    position: relative;
+    overflow: hidden;
+}
+.confirm-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 2px;
+    background: linear-gradient(90deg, var(--or), var(--or3));
+}
+
+.confirm-card-title {
+    font-family: 'Space Mono', monospace;
+    font-size: .5rem;
+    letter-spacing: .25em;
+    text-transform: uppercase;
+    color: var(--or);
+    margin-bottom: 1.5rem;
+    display: flex;
+    align-items: center;
+    gap: .6rem;
+}
+.confirm-card-title::before,
+.confirm-card-title::after { content:''; flex:1; height:1px; background:var(--border); }
+
+.detail-row {
+    display: flex;
+    align-items: flex-start;
+    gap: .85rem;
+    padding: .85rem 0;
+    border-bottom: 1px solid var(--border);
+}
+.detail-row:last-child { border-bottom: none; }
+
+.detail-icon {
+    width: 32px; height: 32px;
+    border-radius: 2px;
+    background: rgba(197,165,114,0.08);
+    border: 1px solid rgba(197,165,114,0.15);
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+    font-size: .85rem;
+}
+.detail-icon i { color: var(--or); }
+
+.detail-lbl {
+    font-family: 'Space Mono', monospace;
+    font-size: .44rem;
+    letter-spacing: .14em;
+    text-transform: uppercase;
+    color: var(--text3);
+    margin-bottom: .2rem;
+}
+.detail-val {
+    font-size: .85rem;
+    font-weight: 400;
+    color: var(--text);
 }
 </style>
+{% endblock %}
+
+{% block body %}
+<div class="confirm-page">
+    <div class="confirm-wrap">
+
+        <div class="confirm-mark">
+            <i class="bi bi-check-lg"></i>
+        </div>
+
+        <h1 class="confirm-title">Réservation <em>confirmée</em> !</h1>
+        <p class="confirm-sub">
+            Merci <strong>{{ reservation.name }}</strong>,<br>
+            votre place est réservée avec succès.
+        </p>
+
+        <div class="confirm-card">
+            <div class="confirm-card-title">Détails de la réservation</div>
+
+            <div class="detail-row">
+                <div class="detail-icon"><i class="bi bi-calendar-event"></i></div>
+                <div>
+                    <div class="detail-lbl">Événement</div>
+                    <div class="detail-val">{{ reservation.event.title }}</div>
+                </div>
+            </div>
+
+            <div class="detail-row">
+                <div class="detail-icon"><i class="bi bi-clock"></i></div>
+                <div>
+                    <div class="detail-lbl">Date &amp; heure</div>
+                    <div class="detail-val">{{ reservation.event.date|date('d/m/Y à H:i') }}</div>
+                </div>
+            </div>
+
+            <div class="detail-row">
+                <div class="detail-icon"><i class="bi bi-geo-alt"></i></div>
+                <div>
+                    <div class="detail-lbl">Lieu</div>
+                    <div class="detail-val">{{ reservation.event.location }}</div>
+                </div>
+            </div>
+
+            <div class="detail-row">
+                <div class="detail-icon"><i class="bi bi-envelope"></i></div>
+                <div>
+                    <div class="detail-lbl">Email</div>
+                    <div class="detail-val">{{ reservation.email }}</div>
+                </div>
+            </div>
+
+            {% if reservation.phone %}
+            <div class="detail-row">
+                <div class="detail-icon"><i class="bi bi-telephone"></i></div>
+                <div>
+                    <div class="detail-lbl">Téléphone</div>
+                    <div class="detail-val">{{ reservation.phone }}</div>
+                </div>
+            </div>
+            {% endif %}
+
+        </div>
+
+        <a href="{{ path('event_index') }}" class="btn-or" style="display:inline-block;width:100%;text-align:center;">
+            ← Retour aux événements
+        </a>
+
+    </div>
+</div>
 {% endblock %}

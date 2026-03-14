@@ -1,0 +1,1123 @@
+{% extends 'base.html.twig' %}
+{% block title %}EventApp — L'Art de la Réservation{% endblock %}
+
+{% block stylesheets %}
+<style>
+
+
+.hero-lux {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    padding: 0 6% 0 10%;
+    position: relative;
+    overflow: hidden;
+}
+
+.hero-noise {
+    position: absolute; inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.02'/%3E%3C/svg%3E");
+    pointer-events: none;
+}
+
+.hero-vert-line {
+    position: absolute;
+    left: 7%;
+    top: 15%; bottom: 15%;
+    width: 1px;
+    background: linear-gradient(to bottom, transparent, var(--or) 30%, var(--or) 70%, transparent);
+    opacity: .35;
+}
+.hero-vert-line::before {
+    content: '';
+    position: absolute;
+    top: 0; left: -3px;
+    width: 7px; height: 7px;
+    background: var(--or);
+    transform: rotate(45deg);
+}
+.hero-vert-line::after {
+    content: '';
+    position: absolute;
+    bottom: 0; left: -3px;
+    width: 7px; height: 7px;
+    background: var(--or);
+    transform: rotate(45deg);
+}
+
+/* Right visual */
+.hero-right-art {
+    position: absolute;
+    right: 0; top: 0; bottom: 0;
+    width: 38%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+}
+.hero-hex {
+    position: relative;
+    width: 320px; height: 360px;
+}
+.hex-ring {
+    position: absolute;
+    border: 1px solid rgba(197,165,114,0.12);
+    border-radius: 50%;
+    top: 50%; left: 50%;
+    transform: translate(-50%,-50%);
+    animation: spinRing 30s linear infinite;
+}
+.hex-ring:nth-child(2) { width: 280px; height: 280px; animation-duration: 22s; animation-direction: reverse; border-color: rgba(197,165,114,0.18); }
+.hex-ring:nth-child(3) { width: 200px; height: 200px; animation-duration: 16s; border-color: rgba(197,165,114,0.25); }
+.hex-ring:nth-child(4) { width: 120px; height: 120px; animation-duration: 10s; animation-direction: reverse; border-color: rgba(197,165,114,0.35); }
+@keyframes spinRing { to { transform: translate(-50%,-50%) rotate(360deg); } }
+
+.hex-core {
+    position: absolute;
+    top:50%; left:50%;
+    transform: translate(-50%,-50%);
+    text-align: center;
+}
+.hex-core svg { width: 60px; height: 60px; }
+
+.float-badge {
+    position: absolute;
+    background: var(--glass);
+    backdrop-filter: blur(20px);
+    border: 1px solid var(--glass-border);
+    border-radius: 3px;
+    padding: .85rem 1rem;
+    display: flex;
+    align-items: center;
+    gap: .75rem;
+    animation: floatBadge 5s ease-in-out infinite;
+}
+.float-badge:nth-child(6) { bottom: 20%; left: -20px; animation-delay: 0s; }
+.float-badge:nth-child(7) { top: 22%; right: 10px; animation-delay: 1.2s; }
+@keyframes floatBadge { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-10px)} }
+
+.badge-icon {
+    width: 34px; height: 34px;
+    border-radius: 2px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 1rem;
+    flex-shrink: 0;
+}
+.badge-text-main {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: .95rem;
+    font-weight: 600;
+    color: var(--text);
+    line-height: 1.2;
+}
+.badge-text-sub {
+    font-family: 'Space Mono', monospace;
+    font-size: .48rem;
+    letter-spacing: .1em;
+    color: var(--text3);
+}
+
+.hero-content { position: relative; z-index: 2; max-width: 560px; }
+
+.hero-pretitle {
+    font-family: 'Space Mono', monospace;
+    font-size: .56rem;
+    letter-spacing: .35em;
+    text-transform: uppercase;
+    color: var(--or);
+    margin-bottom: 2rem;
+    opacity: 0;
+    animation: fUp .7s .3s ease forwards;
+    display: flex;
+    align-items: center;
+    gap: .75rem;
+}
+.hero-pretitle::before {
+    content: '';
+    width: 28px; height: 1px;
+    background: var(--or);
+    flex-shrink: 0;
+}
+
+.hero-h1 {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: clamp(3.5rem, 8vw, 6.5rem);
+    font-weight: 300;
+    line-height: 1.02;
+    letter-spacing: -.015em;
+    margin-bottom: 1.5rem;
+    opacity: 0;
+    animation: fUp .9s .5s ease forwards;
+}
+.hero-h1 strong {
+    font-weight: 600;
+    font-style: italic;
+    color: var(--or);
+}
+
+.typewriter-wrap {
+    font-family: 'Space Mono', monospace;
+    font-size: .78rem;
+    color: var(--text2);
+    letter-spacing: .08em;
+    margin-bottom: 3rem;
+    min-height: 1.5rem;
+    opacity: 0;
+    animation: fUp .7s .8s ease forwards;
+    display: flex;
+    align-items: center;
+    gap: .5rem;
+}
+.typewriter-wrap::before {
+    content: '›';
+    color: var(--or);
+    font-size: 1.1rem;
+    flex-shrink: 0;
+}
+.tw-cursor {
+    display: inline-block;
+    width: 2px; height: .85rem;
+    background: var(--or);
+    margin-left: 1px;
+    animation: blk .75s ease-in-out infinite;
+    vertical-align: text-bottom;
+    flex-shrink: 0;
+}
+@keyframes blk { 0%,100%{opacity:1} 50%{opacity:0} }
+
+.hero-btns {
+    display: flex;
+    gap: .85rem;
+    flex-wrap: wrap;
+    opacity: 0;
+    animation: fUp .7s 1s ease forwards;
+    margin-bottom: 3.5rem;
+}
+
+.hero-counter {
+    display: inline-flex;
+    align-items: center;
+    gap: 1.25rem;
+    padding: .85rem 1.25rem;
+    background: var(--glass);
+    backdrop-filter: blur(20px);
+    border: 1px solid var(--glass-border);
+    border-radius: 3px;
+    opacity: 0;
+    animation: fUp .7s 1.2s ease forwards;
+}
+.hc-label {
+    font-family: 'Space Mono', monospace;
+    font-size: .48rem;
+    letter-spacing: .2em;
+    text-transform: uppercase;
+    color: var(--text3);
+}
+.hc-value {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.8rem;
+    font-weight: 300;
+    color: var(--or);
+    line-height: 1;
+}
+.hc-bar {
+    width: 80px; height: 2px;
+    background: rgba(197,165,114,0.12);
+    border-radius: 2px;
+    overflow: hidden;
+}
+.hc-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--or), var(--or3));
+    border-radius: 2px;
+    width: 75%;
+    animation: hcPulse 3s ease-in-out infinite;
+}
+@keyframes hcPulse { 0%,100%{opacity:1} 50%{opacity:.6} }
+
+.hero-scroll-hint {
+    position: absolute;
+    bottom: 2.5rem; left: 50%;
+    transform: translateX(-50%);
+    display: flex; flex-direction: column; align-items: center; gap: .5rem;
+    opacity: 0;
+    animation: fUp .7s 2s ease forwards;
+}
+.scroll-mouse {
+    width: 20px; height: 32px;
+    border: 1px solid rgba(197,165,114,0.3);
+    border-radius: 10px;
+    position: relative;
+}
+.scroll-ball {
+    width: 3px; height: 6px;
+    background: var(--or);
+    border-radius: 2px;
+    position: absolute;
+    top: 5px; left: 50%;
+    transform: translateX(-50%);
+    animation: scrollBall 2s ease-in-out infinite;
+}
+@keyframes scrollBall { 0%,100%{top:5px;opacity:1} 50%{top:18px;opacity:.2} }
+.scroll-text {
+    font-family: 'Space Mono', monospace;
+    font-size: .44rem;
+    letter-spacing: .22em;
+    text-transform: uppercase;
+    color: var(--text3);
+}
+
+@keyframes fUp { from{opacity:0;transform:translateY(20px)} to{opacity:1;transform:translateY(0)} }
+
+
+.stats-lux {
+    display: grid;
+    grid-template-columns: repeat(4,1fr);
+    background: var(--bg2);
+    border-top: 1px solid var(--border);
+    border-bottom: 1px solid var(--border);
+    transition: background .4s;
+}
+.stat-cell {
+    padding: 2.8rem 1.5rem;
+    text-align: center;
+    border-right: 1px solid var(--border);
+    transition: background .3s;
+    position: relative;
+    overflow: hidden;
+}
+.stat-cell:last-child { border-right: none; }
+.stat-cell::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(circle at 50% 0%, rgba(197,165,114,0.06), transparent 70%);
+    opacity: 0;
+    transition: opacity .4s;
+}
+.stat-cell:hover::before { opacity: 1; }
+.stat-cell:hover { background: rgba(197,165,114,0.02); }
+
+.stat-num {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: clamp(2.8rem,5vw,4rem);
+    font-weight: 300;
+    color: var(--or);
+    line-height: 1;
+    margin-bottom: .4rem;
+}
+.stat-lbl {
+    font-family: 'Space Mono', monospace;
+    font-size: .5rem;
+    letter-spacing: .16em;
+    text-transform: uppercase;
+    color: var(--text3);
+    margin-bottom: .25rem;
+}
+.stat-sub {
+    font-size: .72rem;
+    font-weight: 300;
+    color: var(--text3);
+    font-style: italic;
+    font-family: 'Cormorant Garamond', serif;
+}
+
+.how-lux {
+    padding: 8rem 6%;
+    background: var(--bg);
+    transition: background .4s;
+}
+.how-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 7rem;
+    align-items: center;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+.how-steps { display: flex; flex-direction: column; }
+.how-step {
+    display: flex;
+    gap: 1.75rem;
+    align-items: flex-start;
+    padding: 2rem 0;
+    border-bottom: 1px solid var(--border);
+    transition: padding-left .35s;
+}
+.how-step:first-child { border-top: 1px solid var(--border); }
+.how-step:hover { padding-left: .5rem; }
+.how-num {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 3.5rem;
+    font-weight: 300;
+    color: rgba(197,165,114,0.15);
+    line-height: 1;
+    flex-shrink: 0;
+    width: 60px;
+    transition: color .3s;
+}
+.how-step:hover .how-num { color: rgba(197,165,114,0.4); }
+.how-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.3rem;
+    font-weight: 600;
+    margin-bottom: .4rem;
+    color: var(--text);
+}
+.how-desc {
+    font-size: .8rem;
+    font-weight: 300;
+    color: var(--text2);
+    line-height: 1.85;
+}
+
+.stack-wrap { position: relative; height: 300px; }
+.stack-card {
+    position: absolute;
+    background: var(--bg3);
+    border: 1px solid var(--border);
+    border-radius: 3px;
+    padding: 1.5rem;
+    width: 270px;
+    transition: all .4s;
+}
+.stack-card:nth-child(1) { top:0; left:0; z-index:3; }
+.stack-card:nth-child(2) { top:16px; left:16px; z-index:2; opacity:.5; }
+.stack-card:nth-child(3) { top:32px; left:32px; z-index:1; opacity:.22; }
+.stack-card:hover { transform:translate(-4px,-4px); }
+.stack-etag {
+    font-family: 'Space Mono', monospace;
+    font-size: .5rem;
+    letter-spacing: .15em;
+    text-transform: uppercase;
+    color: var(--or);
+    margin-bottom: .5rem;
+}
+.stack-etitle {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--text);
+    line-height: 1.3;
+    margin-bottom: .85rem;
+}
+.stack-bar {
+    height: 2px;
+    background: rgba(197,165,114,0.1);
+    border-radius: 1px;
+    overflow: hidden;
+    margin-bottom: .35rem;
+}
+.stack-fill { height: 100%; background: linear-gradient(90deg,var(--or),var(--or3)); border-radius: 1px; }
+.stack-info {
+    font-family: 'Space Mono', monospace;
+    font-size: .48rem;
+    letter-spacing: .08em;
+    color: var(--text3);
+}
+
+
+.events-lux {
+    padding: 8rem 6%;
+    background: var(--bg2);
+    transition: background .4s;
+}
+.events-header {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    margin-bottom: 4rem;
+    max-width: 1200px;
+    margin-left: auto;
+    margin-right: auto;
+    flex-wrap: wrap;
+    gap: 1.25rem;
+}
+.events-grid {
+    display: grid;
+    grid-template-columns: 1.6fr 1fr 1fr;
+    gap: 1.5rem;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.flip-3d {
+    perspective: 1200px;
+    cursor: pointer;
+    height: 340px;
+}
+.flip-inner {
+    position: relative;
+    width: 100%; height: 100%;
+    transform-style: preserve-3d;
+    transition: transform .8s cubic-bezier(.23,1,.32,1);
+}
+.flip-3d:hover .flip-inner { transform: rotateY(180deg); }
+
+.flip-f, .flip-b {
+    position: absolute; inset: 0;
+    backface-visibility: hidden;
+    -webkit-backface-visibility: hidden;
+    border-radius: 3px;
+    overflow: hidden;
+}
+.flip-f {
+    background: var(--bg3);
+    border: 1px solid var(--border);
+}
+.flip-b {
+    background: linear-gradient(135deg, #1a1408 0%, #0d0903 100%);
+    border: 1px solid rgba(197,165,114,0.4);
+    transform: rotateY(180deg);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 1rem;
+    padding: 2rem;
+    text-align: center;
+}
+
+.card-img-wrap {
+    height: 210px;
+    position: relative;
+    overflow: hidden;
+}
+.card-img-wrap img { width:100%; height:100%; object-fit:cover; transition:transform .4s; }
+.flip-3d:hover .card-img-wrap img { transform:scale(1.05); }
+.card-img-placeholder {
+    width:100%; height:100%;
+    background: linear-gradient(135deg, #1a1408, #2a1f10);
+    display: flex; align-items: center; justify-content: center;
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 3.5rem;
+    color: rgba(197,165,114,0.1);
+}
+.card-seats-badge {
+    position: absolute; top:.75rem; right:.75rem;
+    background: rgba(8,8,8,0.88);
+    border: 1px solid rgba(197,165,114,0.35);
+    color: var(--or);
+    padding: .22rem .65rem;
+    font-family: 'Space Mono', monospace;
+    font-size: .5rem;
+    letter-spacing: .12em;
+    border-radius: 2px;
+}
+.card-body-wrap { padding: 1.1rem 1.25rem; }
+.card-etag {
+    font-family: 'Space Mono', monospace;
+    font-size: .52rem;
+    letter-spacing: .15em;
+    text-transform: uppercase;
+    color: var(--or);
+    margin-bottom: .35rem;
+}
+.card-etitle {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: var(--text);
+    line-height: 1.25;
+}
+
+.back-etitle {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.3rem;
+    font-weight: 600;
+    color: var(--or);
+    line-height: 1.2;
+}
+.back-info {
+    font-family: 'Space Mono', monospace;
+    font-size: .56rem;
+    letter-spacing: .1em;
+    color: rgba(197,165,114,0.5);
+    line-height: 1.7;
+}
+.seats-track {
+    width: 100%; height: 2px;
+    background: rgba(197,165,114,0.1);
+    border-radius: 1px;
+    overflow: hidden;
+}
+.seats-fill-anim {
+    height: 100%;
+    background: linear-gradient(90deg, var(--or), var(--or3));
+    border-radius: 1px;
+}
+.btn-reserve {
+    background: var(--or) !important;
+    color: var(--bg) !important;
+    border: none;
+    padding: .65rem 1.5rem;
+    font-family: 'Space Mono', monospace;
+    font-size: .58rem;
+    letter-spacing: .1em;
+    text-transform: uppercase;
+    cursor: pointer;
+    border-radius: 2px;
+    transition: background .2s;
+    width: 100%;
+    text-decoration: none !important;
+    display: block;
+    text-align: center;
+}
+.btn-reserve:hover { background: var(--or3) !important; }
+
+.card-realtime {
+    display: flex;
+    align-items: center;
+    gap: .85rem;
+    padding: .6rem .85rem;
+    background: rgba(197,165,114,0.04);
+    border: 1px solid rgba(197,165,114,0.1);
+    border-radius: 2px;
+    width: 100%;
+}
+.rt-label { font-family:'Space Mono',monospace; font-size:.44rem; letter-spacing:.12em; text-transform:uppercase; color:var(--text3); }
+.rt-value { font-family:'Cormorant Garamond',serif; font-size:1.1rem; font-weight:300; color:var(--or); }
+.rt-bar { flex:1; height:2px; background:rgba(197,165,114,0.1); border-radius:1px; overflow:hidden; }
+.rt-fill { height:100%; background:linear-gradient(90deg,var(--or),var(--or3)); border-radius:1px; transition:width .5s; }
+
+
+.testi-lux {
+    padding: 8rem 6%;
+    background: var(--bg);
+    transition: background .4s;
+}
+.testi-grid {
+    display: grid;
+    grid-template-columns: repeat(3,1fr);
+    gap: 1.5rem;
+    max-width: 1200px;
+    margin: 3rem auto 0;
+}
+.testi-card {
+    padding: 2rem;
+    border: 1px solid var(--border);
+    border-radius: 3px;
+    background: rgba(197,165,114,0.015);
+    transition: all .35s;
+    position: relative;
+    overflow: hidden;
+}
+.testi-card::before {
+    content: '❝';
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 5rem;
+    color: rgba(197,165,114,0.06);
+    position: absolute;
+    top: .25rem; left: 1rem;
+    line-height: 1;
+}
+.testi-card::after {
+    content: '';
+    position: absolute;
+    bottom: 0; left: 0; right: 0;
+    height: 2px;
+    background: linear-gradient(90deg, var(--or), var(--or3));
+    transform: scaleX(0);
+    transition: transform .4s;
+    transform-origin: left;
+}
+.testi-card:hover { border-color: rgba(197,165,114,0.3); transform: translateY(-5px); }
+.testi-card:hover::after { transform: scaleX(1); }
+
+.testi-text {
+    font-size: .875rem;
+    font-weight: 300;
+    font-style: italic;
+    color: var(--text2);
+    line-height: 1.85;
+    margin-bottom: 1.5rem;
+    padding-top: 1.5rem;
+}
+.testi-author {
+    display: flex;
+    align-items: center;
+    gap: .75rem;
+    border-top: 1px solid var(--border);
+    padding-top: 1rem;
+}
+.testi-av {
+    width: 36px; height: 36px;
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-weight: 600; font-size: .7rem; color: var(--bg);
+    background: linear-gradient(135deg, var(--or), var(--or3));
+    flex-shrink: 0;
+    font-family: 'Outfit', sans-serif;
+}
+.testi-name {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--text);
+}
+.testi-role {
+    font-family: 'Space Mono', monospace;
+    font-size: .5rem;
+    letter-spacing: .1em;
+    color: var(--text3);
+    margin-top: .1rem;
+    text-transform: uppercase;
+}
+
+
+.cta-lux {
+    padding: 8rem 6%;
+    background: var(--bg2);
+    text-align: center;
+    transition: background .4s;
+}
+.cta-frame {
+    max-width: 760px;
+    margin: 0 auto;
+    padding: 5rem 4rem;
+    border: 1px solid var(--border);
+    border-radius: 3px;
+    position: relative;
+    background: linear-gradient(135deg, rgba(197,165,114,0.025), transparent);
+}
+.cta-frame::before { content:''; position:absolute; top:0;left:0; width:60px;height:60px; border-top:1px solid rgba(197,165,114,0.35); border-left:1px solid rgba(197,165,114,0.35); }
+.cta-frame::after { content:''; position:absolute; bottom:0;right:0; width:60px;height:60px; border-bottom:1px solid rgba(197,165,114,0.35); border-right:1px solid rgba(197,165,114,0.35); }
+
+.cta-collector {
+    font-family: 'Space Mono', monospace;
+    font-size: .52rem;
+    letter-spacing: .3em;
+    text-transform: uppercase;
+    color: var(--or);
+    margin-bottom: 1.75rem;
+    display: inline-flex;
+    align-items: center;
+    gap: .75rem;
+}
+.cta-collector::before, .cta-collector::after { content:''; width:24px; height:1px; background:var(--or); }
+
+.cta-h2 {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: clamp(2.2rem,5vw,4rem);
+    font-weight: 300;
+    line-height: 1.1;
+    margin-bottom: 1rem;
+    color: var(--text);
+}
+.cta-h2 em { font-style: italic; color: var(--or); }
+
+.cta-sub {
+    font-size: .875rem;
+    font-weight: 300;
+    color: var(--text2);
+    margin-bottom: 2.75rem;
+    line-height: 1.8;
+}
+.cta-btns { display:flex; gap:.85rem; justify-content:center; flex-wrap:wrap; }
+
+@media (max-width:1100px) {
+    .hero-lux { padding:6rem 5% 4rem; }
+    .hero-right-art { display:none; }
+    .how-grid { grid-template-columns:1fr; gap:3rem; }
+    .stack-wrap { height:180px; }
+    .events-grid { grid-template-columns:1fr 1fr; }
+    .testi-grid { grid-template-columns:1fr; }
+    .stats-lux { grid-template-columns:1fr 1fr; }
+}
+@media (max-width:700px) {
+    .events-grid { grid-template-columns:1fr; }
+    .cta-frame { padding:3rem 1.5rem; }
+}
+</style>
+{% endblock %}
+
+{% block body %}
+
+<section class="book-section hero-lux" data-sec="0" data-page="— I —">
+    <div class="hero-noise"></div>
+    <div class="hero-vert-line"></div>
+
+    <div class="hero-right-art">
+        <div class="hero-hex">
+            <div class="hex-ring" style="width:360px;height:360px;"></div>
+            <div class="hex-ring"></div>
+            <div class="hex-ring"></div>
+            <div class="hex-ring"></div>
+            <div class="hex-core">
+                <svg viewBox="0 0 60 60" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <polygon points="30,4 56,18 56,42 30,56 4,42 4,18" fill="none" stroke="#c5a572" stroke-width="1.5"/>
+                    <polygon points="30,12 48,22 48,38 30,48 12,38 12,22" fill="none" stroke="#c5a572" stroke-width=".8" opacity=".4"/>
+                    <circle cx="30" cy="30" r="8" fill="none" stroke="#c5a572" stroke-width="1"/>
+                    <circle cx="30" cy="30" r="3" fill="#c5a572"/>
+                </svg>
+            </div>
+        </div>
+        <div class="float-badge" style="bottom:22%;left:-15px;">
+            <div class="badge-icon" style="background:rgba(197,165,114,0.12);">🔐</div>
+            <div>
+                <div class="badge-text-main">Passkey FIDO2</div>
+                <div class="badge-text-sub">Authentification biométrique</div>
+            </div>
+        </div>
+        <div class="float-badge" style="top:20%;right:5px;">
+            <div class="badge-icon" style="background:rgba(197,165,114,0.12);">⚡</div>
+            <div>
+                <div class="badge-text-main">30 secondes</div>
+                <div class="badge-text-sub">Pour réserver</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="hero-content">
+        <h1 class="hero-h1">
+            L'art de<br>
+            réserver<br>
+            <strong>l'exceptionnel</strong>
+        </h1>
+        <div class="typewriter-wrap">
+            <span id="tw-text"></span><span class="tw-cursor"></span>
+        </div>
+        <div class="hero-btns">
+            <a href="{{ path('event_index') }}" class="btn-or">Découvrir la collection</a>
+            <a href="{{ path('app_register') }}" class="btn-outline-or">Créer son ex-libris</a>
+        </div>
+        <div class="hero-counter">
+            <div>
+                <div class="hc-label">Places disponibles</div>
+                <div class="hc-value" id="hero-seats">{{ totalSeats ?? 157 }}</div>
+            </div>
+            <div class="hc-bar"><div class="hc-fill"></div></div>
+            <div>
+                <div class="hc-label">Événements</div>
+                <div class="hc-value">{{ totalEvents }}</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="hero-scroll-hint">
+        <div class="scroll-mouse"><div class="scroll-ball"></div></div>
+        <div class="scroll-text">Feuilleter</div>
+    </div>
+</section>
+
+{# ── SÉPARATEUR 1 ── #}
+<div class="page-sep reveal-lux">
+    <div class="sep-corner tl"></div><div class="sep-corner tr"></div>
+    <div class="sep-corner bl"></div><div class="sep-corner br"></div>
+    <div class="sep-line-full"></div>
+    <div class="sep-center">
+        <div class="sep-diamond-sm"></div>
+        <div class="sep-diamond-md"></div>
+        <div class="sep-diamond-lg"></div>
+        <div class="sep-label">Chapitre Premier — Chiffres</div>
+        <div class="sep-diamond-lg"></div>
+        <div class="sep-diamond-md"></div>
+        <div class="sep-diamond-sm"></div>
+    </div>
+</div>
+
+{# ════════════════ SECTION 2 : STATS ════════════════ #}
+<section class="book-section" data-sec="1" data-page="— II —">
+    <div class="stats-lux reveal-lux">
+        <div class="stat-cell">
+            <div class="stat-num" data-target="{{ totalEvents }}" data-suffix="">0</div>
+            <div class="stat-lbl">Événements</div>
+            <div class="stat-sub">disponibles</div>
+        </div>
+        <div class="stat-cell">
+            <div class="stat-num" data-target="500" data-suffix="+">0</div>
+            <div class="stat-lbl">Participants</div>
+            <div class="stat-sub">collectionneurs</div>
+        </div>
+        <div class="stat-cell">
+            <div class="stat-num" data-target="100" data-suffix="%">0</div>
+            <div class="stat-lbl">Sécurisé</div>
+            <div class="stat-sub">Passkey FIDO2</div>
+        </div>
+        <div class="stat-cell">
+            <div class="stat-num" data-target="30" data-suffix="s">0</div>
+            <div class="stat-lbl">Réservation</div>
+            <div class="stat-sub">chronométrée</div>
+        </div>
+    </div>
+</section>
+
+{# ── SÉPARATEUR 2 ── #}
+<div class="page-sep reveal-lux">
+    <div class="sep-corner tl"></div><div class="sep-corner tr"></div>
+    <div class="sep-corner bl"></div><div class="sep-corner br"></div>
+    <div class="sep-line-full"></div>
+    <div class="sep-center">
+        <div class="sep-diamond-sm"></div>
+        <div class="sep-diamond-md"></div>
+        <div class="sep-diamond-lg"></div>
+        <div class="sep-label">Chapitre II — L'expérience</div>
+        <div class="sep-diamond-lg"></div>
+        <div class="sep-diamond-md"></div>
+        <div class="sep-diamond-sm"></div>
+    </div>
+</div>
+
+{# ════════════════ SECTION 3 : HOW IT WORKS ════════════════ #}
+<section class="book-section how-lux" data-sec="2" data-page="— III —" id="how">
+    <div class="how-grid">
+        <div class="reveal-lux">
+            <div class="eyebrow">Comment ça marche</div>
+            <h2 class="sec-h2" style="margin-bottom:3rem;">
+                Réservez en<br><em>3 étapes</em> simples
+            </h2>
+            <div class="how-steps">
+                <div class="how-step">
+                    <div class="how-num">01</div>
+                    <div>
+                       <div class="how-title">Parcourez les événements</div>
+<div class="how-desc">Découvrez tous les événements disponibles : concerts, conférences, workshops et hackathons. Filtrez par date, lieu ou catégorie.</div>
+                    </div>
+                </div>
+                <div class="how-step">
+                    <div class="how-num">02</div>
+                    <div>
+                       <div class="how-title">Connectez-vous en un clin d'œil</div>
+<div class="how-desc">Utilisez votre empreinte digitale ou Face ID grâce à la technologie Passkey. Plus besoin de mots de passe, une connexion ultra-rapide et sécurisée.</div>
+                    </div>
+                </div>
+                <div class="how-step">
+                    <div class="how-num">03</div>
+                    <div>
+                      <div class="how-title">Réservez instantanément</div>
+<div class="how-desc">En 30 secondes chrono, votre place est réservée. Confirmation immédiate par email et dans votre espace personnel.</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="reveal-lux" style="display:flex;align-items:center;justify-content:center;">
+            <div class="stack-wrap">
+                <div class="stack-card">
+                    <div class="stack-etag">Événement en vedette</div>
+                    <div class="stack-etitle">Conférence Tech & Innovation 2026</div>
+                    <div class="stack-bar"><div class="stack-fill" style="width:70%;"></div></div>
+                    <div class="stack-info">8 / 12 places réservées</div>
+                </div>
+                <div class="stack-card">
+                    <div class="stack-etag">Workshop</div>
+                    <div class="stack-etitle">UI/UX Design Moderne</div>
+                </div>
+                <div class="stack-card">
+                    <div class="stack-etag">Hackathon</div>
+                    <div class="stack-etitle">Intelligence Artificielle</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+{# ── SÉPARATEUR 3 ── #}
+<div class="page-sep reveal-lux" style="background:var(--bg2);">
+    <div class="sep-corner tl"></div><div class="sep-corner tr"></div>
+    <div class="sep-corner bl"></div><div class="sep-corner br"></div>
+    <div class="sep-line-full"></div>
+    <div class="sep-center" style="background:var(--bg2);">
+        <div class="sep-diamond-sm"></div>
+        <div class="sep-diamond-md"></div>
+        <div class="sep-diamond-lg"></div>
+        <div class="sep-label">Chapitre III — Planches illustrées</div>
+        <div class="sep-diamond-lg"></div>
+        <div class="sep-diamond-md"></div>
+        <div class="sep-diamond-sm"></div>
+    </div>
+</div>
+
+{# ════════════════ SECTION 4 : EVENTS ════════════════ #}
+{% if featuredEvents is not empty %}
+<section class="book-section events-lux" data-sec="3" data-page="— IV —">
+    <div class="events-header">
+        <div class="reveal-lux">
+            <div class="eyebrow">Planches illustrées</div>
+            <h2 class="sec-h2">Événements <em>en vedette</em></h2>
+        </div>
+        <a href="{{ path('event_index') }}" class="btn-outline-or reveal-lux"
+           style="padding:.65rem 1.25rem;font-size:.6rem;">
+            Voir tout le catalogue →
+        </a>
+    </div>
+    <div class="events-grid">
+        {% for event in featuredEvents %}
+        <div class="flip-3d reveal-lux">
+            <div class="flip-inner">
+                {# Recto #}
+                <div class="flip-f">
+                    <div class="card-img-wrap">
+                        {% if event.image %}
+                            <img src="{{ asset('uploads/events/' ~ event.image) }}" alt="{{ event.title }}">
+                        {% else %}
+                            <div class="card-img-placeholder">✦</div>
+                        {% endif %}
+                        <div class="card-seats-badge">{{ event.seats }} PLACES</div>
+                    </div>
+                    <div class="card-body-wrap">
+                        <div class="card-etag">{{ event.date|date('d/m/Y') }} · {{ event.location }}</div>
+                        <div class="card-etitle">{{ event.title }}</div>
+                    </div>
+                    <div style="padding:0 1.25rem 1.1rem;">
+                        <div class="card-realtime">
+                            <div>
+                                <div class="rt-label">Places</div>
+                                <div class="rt-value">{{ event.seats }}</div>
+                            </div>
+                            <div class="rt-bar">
+                                <div class="rt-fill" style="width:65%;"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                {# Verso #}
+                <div class="flip-b">
+                    <div class="back-etitle">{{ event.title }}</div>
+                    <div class="seats-track">
+                        <div class="seats-fill-anim" style="width:65%;"></div>
+                    </div>
+                    <div class="back-info">
+                        {{ event.seats }} places disponibles<br>
+                        {{ event.location }}<br>
+                        {{ event.date|date('d/m/Y à H:i') }}
+                    </div>
+                    <a href="{{ path('event_show', {id: event.id}) }}" class="btn-reserve">
+                        Lire la suite →
+                    </a>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</section>
+{% endif %}
+
+{# ── SÉPARATEUR 4 ── #}
+<div class="page-sep reveal-lux">
+    <div class="sep-corner tl"></div><div class="sep-corner tr"></div>
+    <div class="sep-corner bl"></div><div class="sep-corner br"></div>
+    <div class="sep-line-full"></div>
+    <div class="sep-center">
+        <div class="sep-diamond-sm"></div>
+        <div class="sep-diamond-md"></div>
+        <div class="sep-diamond-lg"></div>
+        <div class="sep-label">Marginalia — Notes des lecteurs</div>
+        <div class="sep-diamond-lg"></div>
+        <div class="sep-diamond-md"></div>
+        <div class="sep-diamond-sm"></div>
+    </div>
+</div>
+
+{# ════════════════ SECTION 5 : TESTIMONIALS ════════════════ #}
+<section class="book-section testi-lux" data-sec="4" data-page="— V —">
+    <div class="reveal-lux" style="text-align:center;max-width:1200px;margin:0 auto;">
+        <div class="eyebrow" style="justify-content:center;">Marginalia</div>
+        <h2 class="sec-h2">Notes des <em>lecteurs</em></h2>
+    </div>
+    <div class="testi-grid">
+        <div class="testi-card reveal-lux">
+<p class="testi-text">"J'ai réservé ma place pour le concert en 20 secondes chrono. L'interface est magnifique et la connexion Passkey est révolutionnaire."</p>            <div class="testi-author">
+                <div class="testi-av">SA</div>
+                <div>
+                    <div class="testi-name">Sofiene A.</div>
+                    <div class="testi-role">Étudiant FIA3-GL</div>
+                </div>
+            </div>
+        </div>
+        <div class="testi-card reveal-lux">
+            <p class="testi-text">"Design magistral. JWT + Passkeys, c'est exactement ce que l'industrie attendait. Une référence dans la réservation d'événements premium."</p>
+            <div class="testi-author">
+                <div class="testi-av" style="background:linear-gradient(135deg,#2a2a2a,#1a1a1a);color:var(--or);">MH</div>
+                <div>
+                    <div class="testi-name">Mohamed H.</div>
+                    <div class="testi-role">Développeur Senior</div>
+                </div>
+            </div>
+        </div>
+        <div class="testi-card reveal-lux">
+<p class="testi-text">"Enfin une plateforme qui allie design élégant et sécurité moderne. Les réservations sont instantanées et le suivi est parfait."</p>            <div class="testi-author">
+                <div class="testi-av" style="background:linear-gradient(135deg,#1a1408,#2a1f0a);color:var(--or);">LB</div>
+                <div>
+                    <div class="testi-name">Leila B.</div>
+                    <div class="testi-role">Chef de projet IT</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+{# ── SÉPARATEUR 5 ── #}
+<div class="page-sep reveal-lux" style="background:var(--bg2);">
+    <div class="sep-corner tl"></div><div class="sep-corner tr"></div>
+    <div class="sep-corner bl"></div><div class="sep-corner br"></div>
+    <div class="sep-line-full"></div>
+    <div class="sep-center" style="background:var(--bg2);">
+        <div class="sep-diamond-sm"></div>
+        <div class="sep-diamond-md"></div>
+        <div class="sep-diamond-lg"></div>
+        <div class="sep-label">Colophon — Rejoignez l'histoire</div>
+        <div class="sep-diamond-lg"></div>
+        <div class="sep-diamond-md"></div>
+        <div class="sep-diamond-sm"></div>
+    </div>
+</div>
+
+{# ════════════════ SECTION 6 : CTA ════════════════ #}
+<section class="book-section cta-lux" data-sec="5" data-page="— VI —">
+    <div class="cta-frame reveal-lux">
+        <div class="cta-collector">Édition Collector</div>
+        <h2 class="cta-h2">
+    Prêt à <em>réserver</em><br>
+    votre prochain événement ?
+</h2>
+<p class="cta-sub">
+    Rejoignez des milliers de participants qui font confiance à EventApp<br>
+    pour vivre des expériences inoubliables.
+</p>
+        <div class="cta-btns">
+<a href="{{ path('app_register') }}" class="btn-outline-or">Créer un compte</a>
+            <a href="{{ path('event_index') }}" class="btn-outline-or">Feuilleter le catalogue</a>
+        </div>
+    </div>
+</section>
+
+{% endblock %}
+
+{% block javascripts %}
+<script>
+(function() {
+    /* Typewriter */
+    const phrases = [
+    'Concerts · Conférences · Workshops',
+    'Réservez vos places en 30 secondes',
+    'Technologie Passkey FIDO2',
+    '+ de 500 événements chaque année'
+];
+    let pi=0, ci=0, del=false;
+    const el = document.getElementById('tw-text');
+    if (!el) return;
+    function tick() {
+        const ph = phrases[pi];
+        if (!del) { ci++; el.textContent = ph.slice(0,ci); if(ci===ph.length){del=true;setTimeout(tick,2200);return;} }
+        else { ci--; el.textContent = ph.slice(0,ci); if(ci===0){del=false;pi=(pi+1)%phrases.length;setTimeout(tick,350);return;} }
+        setTimeout(tick, del?30:60);
+    }
+    setTimeout(tick, 1600);
+
+    /* Realtime counter update (simulated) */
+    setInterval(() => {
+        const seats = document.getElementById('hero-seats');
+        if (seats) {
+            const cur = parseInt(seats.textContent)||157;
+            const chg = Math.random()<.3 ? -1 : 0;
+            seats.textContent = Math.max(0, cur+chg);
+        }
+        document.querySelectorAll('.rt-value').forEach(el => {
+            const cur = parseInt(el.textContent)||0;
+            const chg = Math.random()<.2 ? (Math.random()<.5?-1:0) : 0;
+            el.textContent = Math.max(0, cur+chg);
+        });
+    }, 4000);
+})();
+</script>
+{% endblock %}

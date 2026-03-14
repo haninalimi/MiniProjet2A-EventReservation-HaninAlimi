@@ -1,68 +1,193 @@
 {% extends 'base.html.twig' %}
 {% block title %}Réserver — {{ event.title }}{% endblock %}
 
+{% block stylesheets %}
+<style>
+.reserve-page {
+    min-height: calc(100vh - 68px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 3rem 1.5rem;
+    background: var(--bg);
+    transition: background .4s;
+}
+
+.reserve-wrap {
+    width: 100%;
+    max-width: 520px;
+}
+
+.reserve-header {
+    text-align: center;
+    margin-bottom: 2.5rem;
+}
+
+.reserve-eyebrow {
+    font-family: 'Space Mono', monospace;
+    font-size: .5rem;
+    letter-spacing: .3em;
+    text-transform: uppercase;
+    color: var(--or);
+    display: inline-flex;
+    align-items: center;
+    gap: .6rem;
+    margin-bottom: 1rem;
+}
+.reserve-eyebrow::before,
+.reserve-eyebrow::after { content:''; width:18px; height:1px; background:var(--or); }
+
+.reserve-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.9rem;
+    font-weight: 300;
+    color: var(--text);
+    line-height: 1.1;
+    margin-bottom: .6rem;
+}
+.reserve-title em { font-style: italic; color: var(--or); }
+
+.reserve-meta {
+    font-family: 'Space Mono', monospace;
+    font-size: .52rem;
+    letter-spacing: .12em;
+    color: var(--text3);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: .85rem;
+    flex-wrap: wrap;
+    margin-bottom: 1.25rem;
+}
+.reserve-meta i { color: var(--or); }
+
+.reserve-seats-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: .5rem;
+    font-family: 'Space Mono', monospace;
+    font-size: .5rem;
+    letter-spacing: .14em;
+    text-transform: uppercase;
+    color: var(--or);
+    border: 1px solid rgba(197,165,114,0.3);
+    padding: .3rem .85rem;
+    border-radius: 2px;
+}
+
+.reserve-card {
+    background: var(--glass);
+    backdrop-filter: blur(40px) saturate(150%);
+    border: 1px solid var(--glass-border);
+    border-radius: 3px;
+    padding: 2.25rem;
+    position: relative;
+    overflow: hidden;
+}
+.reserve-card::before {
+    content: '';
+    position: absolute;
+    top: -50%; left: -50%;
+    width: 200%; height: 200%;
+    background: radial-gradient(circle at 30% 20%, rgba(197,165,114,0.03), transparent 60%);
+    pointer-events: none;
+}
+
+.fg { margin-bottom: 1.25rem; }
+.fg:last-of-type { margin-bottom: 1.75rem; }
+
+.field-error {
+    color: rgba(239,68,68,0.8);
+    font-family: 'Space Mono', monospace;
+    font-size: .52rem;
+    letter-spacing: .08em;
+    margin-top: .3rem;
+}
+
+.reserve-divider {
+    height: 1px;
+    background: linear-gradient(90deg, transparent, var(--border), transparent);
+    margin: 1.5rem 0;
+}
+
+.reserve-back {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: .4rem;
+    margin-top: 1.25rem;
+    font-family: 'Space Mono', monospace;
+    font-size: .5rem;
+    letter-spacing: .12em;
+    text-transform: uppercase;
+    color: var(--text3);
+    text-decoration: none;
+    transition: color .2s;
+}
+.reserve-back:hover { color: var(--or); }
+</style>
+{% endblock %}
+
 {% block body %}
-<div class="container py-5">
-    <div class="row justify-content-center">
-        <div class="col-lg-6">
+<div class="reserve-page">
+    <div class="reserve-wrap">
 
-            <div style="text-align:center; margin-bottom:2.5rem;">
-                <div class="badge-glow mb-3 d-inline-block">
-                    <span class="glow-dot me-1"></span> Réservation
-                </div>
-                <h2 style="font-weight:800; font-size:1.8rem;">{{ event.title }}</h2>
-                <p style="color:var(--text-muted);">
-                    <i class="bi bi-calendar3 me-1"></i> {{ event.date|date('d/m/Y à H:i') }}
-                    <span class="mx-2">·</span>
-                    <i class="bi bi-geo-alt me-1"></i> {{ event.location }}
-                </p>
-                <span class="badge-glow">
-                    <i class="bi bi-people me-1"></i>
-                    {{ availableSeats }} place(s) disponible(s)
-                </span>
+        <div class="reserve-header">
+            <div class="reserve-eyebrow">Réservation</div>
+            <h1 class="reserve-title"><em>{{ event.title }}</em></h1>
+            <div class="reserve-meta">
+                <span><i class="bi bi-calendar3"></i> {{ event.date|date('d/m/Y à H:i') }}</span>
+                <span style="color:var(--or);opacity:.3;">◈</span>
+                <span><i class="bi bi-geo-alt"></i> {{ event.location }}</span>
             </div>
-
-            <div class="card-dark p-4">
-                {{ form_start(form, {'attr': {'novalidate': 'novalidate', 'id': 'reservation-form'}}) }}
-
-                <div style="margin-bottom:1.25rem;">
-                    <label class="label-dark">{{ form_label(form.name) }}</label>
-                    {{ form_widget(form.name, {'attr': {'class': 'input-dark form-control'}}) }}
-                    <div style="color:#f87171; font-size:.8rem; margin-top:.3rem;">
-                        {{ form_errors(form.name) }}
-                    </div>
-                </div>
-
-                <div style="margin-bottom:1.25rem;">
-                    <label class="label-dark">{{ form_label(form.email) }}</label>
-                    {{ form_widget(form.email, {'attr': {'class': 'input-dark form-control'}}) }}
-                    <div style="color:#f87171; font-size:.8rem; margin-top:.3rem;">
-                        {{ form_errors(form.email) }}
-                    </div>
-                </div>
-
-                <div style="margin-bottom:1.75rem;">
-                    <label class="label-dark">{{ form_label(form.phone) }}</label>
-                    {{ form_widget(form.phone, {'attr': {'class': 'input-dark form-control', 'placeholder': '+216 XX XXX XXX'}}) }}
-                    <div style="color:#f87171; font-size:.8rem; margin-top:.3rem;">
-                        {{ form_errors(form.phone) }}
-                    </div>
-                </div>
-
-                <button type="submit" class="btn-glow btn w-100 btn-lg">
-                    <i class="bi bi-check-circle me-2"></i> Confirmer la réservation
-                </button>
-
-                {{ form_end(form) }}
-
-                <div class="text-center mt-3">
-                    <a href="{{ path('event_show', {id: event.id}) }}"
-                       style="color:var(--text-muted); font-size:.875rem; text-decoration:none;">
-                        <i class="bi bi-arrow-left me-1"></i> Retour à l'événement
-                    </a>
-                </div>
+            <div class="reserve-seats-badge">
+                <i class="bi bi-people"></i>
+                {{ availableSeats }} place(s) disponible(s)
             </div>
         </div>
+
+        <div class="reserve-card">
+
+            {{ form_start(form, {'attr': {'novalidate': 'novalidate'}}) }}
+
+            <div class="fg">
+                <label class="label-lux">{{ form_label(form.name) }}</label>
+                {{ form_widget(form.name, {'attr': {'class': 'input-lux', 'placeholder': 'Votre nom complet'}}) }}
+                {% if form_errors(form.name) %}
+                    <div class="field-error">{{ form_errors(form.name) }}</div>
+                {% endif %}
+            </div>
+
+            <div class="fg">
+                <label class="label-lux">{{ form_label(form.email) }}</label>
+                {{ form_widget(form.email, {'attr': {'class': 'input-lux', 'placeholder': 'votre@email.com'}}) }}
+                {% if form_errors(form.email) %}
+                    <div class="field-error">{{ form_errors(form.email) }}</div>
+                {% endif %}
+            </div>
+
+            <div class="fg">
+                <label class="label-lux">{{ form_label(form.phone) }}</label>
+                {{ form_widget(form.phone, {'attr': {'class': 'input-lux', 'placeholder': '+216 XX XXX XXX'}}) }}
+                {% if form_errors(form.phone) %}
+                    <div class="field-error">{{ form_errors(form.phone) }}</div>
+                {% endif %}
+            </div>
+
+            <button type="submit" class="btn-or" style="width:100%;">
+                <i class="bi bi-check-circle me-2"></i> Confirmer la réservation
+            </button>
+
+            {{ form_end(form) }}
+
+            <div class="reserve-divider"></div>
+
+            <a href="{{ path('event_show', {id: event.id}) }}" class="reserve-back">
+                ← Retour à l'événement
+            </a>
+
+        </div>
+
     </div>
 </div>
 {% endblock %}

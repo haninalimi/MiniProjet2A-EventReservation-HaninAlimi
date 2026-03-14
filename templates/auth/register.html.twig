@@ -1,125 +1,504 @@
 {% extends 'base.html.twig' %}
-{% block title %}Créer un compte{% endblock %}
+
+{% block title %}Créer un compte {% endblock %}
+
+{% block stylesheets %}
+    {{ parent() }}
+    <style>
+        .auth-page {
+            min-height: calc(100vh - 80px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 2rem 1rem;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .auth-page::before {
+            content: '';
+            position: absolute;
+            width: 600px;
+            height: 600px;
+            background: radial-gradient(circle, rgba(197, 165, 114, 0.03) 0%, transparent 70%);
+            top: -200px;
+            right: -200px;
+            border-radius: 50%;
+            animation: float 20s ease-in-out infinite;
+        }
+
+        .auth-page::after {
+            content: '';
+            position: absolute;
+            width: 500px;
+            height: 500px;
+            background: radial-gradient(circle, rgba(197, 165, 114, 0.02) 0%, transparent 70%);
+            bottom: -200px;
+            left: -200px;
+            border-radius: 50%;
+            animation: float 15s ease-in-out infinite reverse;
+        }
+
+        .auth-container {
+            width: 100%;
+            max-width: 450px;
+            position: relative;
+            z-index: 2;
+        }
+
+        .auth-header {
+            text-align: center;
+            margin-bottom: 2.5rem;
+        }
+
+        .auth-icon {
+            font-size: 3rem;
+            color: var(--gold-rolls);
+            margin-bottom: 1rem;
+            opacity: 0.8;
+            animation: pulse 2s infinite;
+        }
+
+        .auth-title {
+            font-size: 2rem;
+            font-weight: 300;
+            letter-spacing: 4px;
+            text-transform: uppercase;
+            margin-bottom: 0.5rem;
+        }
+
+        .auth-subtitle {
+            color: var(--silver);
+            font-size: 0.9rem;
+            letter-spacing: 1px;
+        }
+
+        .auth-card {
+            background: var(--glass);
+            backdrop-filter: blur(10px);
+            border: 1px solid var(--glass-border);
+            padding: 2.5rem;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .auth-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, var(--gold-rolls), transparent);
+        }
+
+        .auth-field {
+            margin-bottom: 1.5rem;
+        }
+
+        .auth-label {
+            display: block;
+            color: var(--silver);
+            font-size: 0.8rem;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            margin-bottom: 0.5rem;
+        }
+
+        .auth-input {
+            width: 100%;
+            background: rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(197, 165, 114, 0.2);
+            color: white;
+            padding: 0.8rem 1rem;
+            transition: all 0.3s ease;
+            font-size: 0.95rem;
+        }
+
+        .auth-input:focus {
+            outline: none;
+            border-color: var(--gold-rolls);
+            box-shadow: 0 0 20px rgba(197, 165, 114, 0.1);
+            background: rgba(0, 0, 0, 0.5);
+        }
+
+        .auth-input::placeholder {
+            color: #666;
+            font-style: italic;
+        }
+
+        .auth-input.error {
+            border-color: #ef4444;
+        }
+
+        .password-strength {
+            margin-top: 0.5rem;
+            display: flex;
+            gap: 0.25rem;
+        }
+
+        .strength-bar {
+            flex: 1;
+            height: 3px;
+            background: rgba(197, 165, 114, 0.2);
+            transition: all 0.3s ease;
+        }
+
+        .strength-bar.active {
+            background: var(--gold-rolls);
+        }
+
+        .strength-bar.weak { background: #ef4444; }
+        .strength-bar.medium { background: #f59e0b; }
+        .strength-bar.strong { background: #10b981; }
+
+        .auth-button {
+            width: 100%;
+            padding: 0.9rem;
+            background: transparent;
+            border: 1px solid var(--gold-rolls);
+            color: var(--gold-rolls);
+            font-size: 0.95rem;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+            margin-bottom: 1rem;
+        }
+
+        .auth-button::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(197, 165, 114, 0.2), transparent);
+            transition: left 0.5s ease;
+        }
+
+        .auth-button:hover {
+            background: var(--gold-rolls);
+            color: var(--black-deep);
+        }
+
+        .auth-button:hover::before {
+            left: 100%;
+        }
+
+        .auth-button i {
+            margin-right: 0.5rem;
+        }
+
+        .auth-button-outline {
+            width: 100%;
+            padding: 0.9rem;
+            background: transparent;
+            border: 1px solid rgba(197, 165, 114, 0.3);
+            color: var(--silver);
+            font-size: 0.9rem;
+            letter-spacing: 1px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-bottom: 1.5rem;
+        }
+
+        .auth-button-outline:hover {
+            border-color: var(--gold-rolls);
+            color: var(--gold-rolls);
+            background: rgba(197, 165, 114, 0.05);
+        }
+
+        .auth-divider {
+            margin: 2rem 0;
+            position: relative;
+            text-align: center;
+        }
+
+        .auth-divider::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 0;
+            right: 0;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, var(--gold-rolls), transparent);
+        }
+
+        .auth-divider span {
+            background: var(--black-mat);
+            padding: 0 1rem;
+            color: var(--silver);
+            font-size: 0.8rem;
+            letter-spacing: 1px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .auth-footer {
+            text-align: center;
+            color: var(--silver);
+            font-size: 0.9rem;
+        }
+
+        .auth-link {
+            color: var(--gold-rolls);
+            text-decoration: none;
+            transition: all 0.3s ease;
+            position: relative;
+            padding-bottom: 2px;
+        }
+
+        .auth-link::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 1px;
+            background: var(--gold-rolls);
+            transform: scaleX(0);
+            transition: transform 0.3s ease;
+        }
+
+        .auth-link:hover {
+            color: var(--gold-light);
+        }
+
+        .auth-link:hover::after {
+            transform: scaleX(1);
+        }
+
+        .alert-message {
+            background: rgba(197, 165, 114, 0.1);
+            border: 1px solid rgba(197, 165, 114, 0.3);
+            color: var(--gold-light);
+            padding: 1rem;
+            margin-bottom: 1.5rem;
+            font-size: 0.9rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            animation: slideInDown 0.3s ease;
+        }
+
+        @keyframes slideInDown {
+            from { transform: translateY(-20px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+
+        .alert-message i {
+            font-size: 1.1rem;
+        }
+
+        .alert-success {
+            background: rgba(16, 185, 129, 0.1);
+            border-color: rgba(16, 185, 129, 0.3);
+            color: #6ee7b7;
+        }
+
+        .spinner {
+            display: inline-block;
+            width: 1rem;
+            height: 1rem;
+            border: 2px solid rgba(197, 165, 114, 0.3);
+            border-top-color: var(--gold-rolls);
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+            margin-right: 0.5rem;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        .passkey-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.25rem 1rem;
+            background: rgba(197, 165, 114, 0.1);
+            border: 1px solid rgba(197, 165, 114, 0.3);
+            color: var(--gold-rolls);
+            font-size: 0.75rem;
+            border-radius: 20px;
+            margin-left: 0.5rem;
+        }
+    </style>
+{% endblock %}
 
 {% block body %}
-<div style="min-height:calc(100vh - 80px); display:flex; align-items:center; justify-content:center; padding:2rem 1rem;">
-    <div style="width:100%; max-width:420px;">
-
-        <div style="text-align:center; margin-bottom:2.5rem;">
-            <div style="font-size:2.5rem; font-weight:900;" class="text-gradient">◈</div>
-            <h2 style="font-weight:800; margin-top:.5rem;">Créer un compte</h2>
-            <p style="color:var(--text-muted); font-size:.9rem;">Rejoignez EventApp en quelques secondes</p>
+<div class="auth-page">
+    <div class="auth-container">
+        <div class="auth-header">
+            <div class="auth-icon">◈</div>
+            <h1 class="auth-title">Créer un compte</h1>
+            <p class="auth-subtitle">Rejoignez la collection</p>
         </div>
 
-        <div class="card-dark p-4">
-            <div id="alert-box" style="margin-bottom:1rem;"></div>
+        <div class="auth-card">
+            <div id="alert-box"></div>
 
-            <div style="margin-bottom:1rem;">
-                <label class="label-dark">Email</label>
-                <input type="email" id="email" class="input-dark form-control"
-                       placeholder="votre@email.com">
-            </div>
-            <div style="margin-bottom:1rem;">
-                <label class="label-dark">Mot de passe</label>
-                <input type="password" id="password" class="input-dark form-control"
-                       placeholder="Minimum 6 caractères">
-            </div>
-            <div style="margin-bottom:1.5rem;">
-                <label class="label-dark">Confirmer le mot de passe</label>
-                <input type="password" id="confirm" class="input-dark form-control"
-                       placeholder="••••••••">
+            <div class="auth-field">
+                <label class="auth-label">Email</label>
+                <input type="email" id="email" class="auth-input" 
+                       placeholder="votre@email.com" autocomplete="email">
             </div>
 
-            <button id="btn-register" class="btn-glow btn w-100 btn-lg mb-3">
-                <i class="bi bi-person-plus me-2"></i> Créer mon compte
+            <div class="auth-field">
+                <label class="auth-label">Mot de passe</label>
+                <input type="password" id="password" class="auth-input" 
+                       placeholder="Minimum 6 caractères" autocomplete="new-password">
+                <div class="password-strength" id="passwordStrength">
+                    <div class="strength-bar"></div>
+                    <div class="strength-bar"></div>
+                    <div class="strength-bar"></div>
+                </div>
+            </div>
+
+            <div class="auth-field">
+                <label class="auth-label">Confirmer le mot de passe</label>
+                <input type="password" id="confirm" class="auth-input" 
+                       placeholder="••••••••" autocomplete="new-password">
+            </div>
+
+            <button id="btn-register" class="auth-button">
+                <i class="bi bi-person-plus"></i>
+                <span>Créer mon compte</span>
             </button>
 
-            <hr class="divider-glow">
+            <button id="btn-register-passkey" class="auth-button-outline">
+                <i class="bi bi-fingerprint me-2"></i>
+                Créer avec Passkey
+                <span class="passkey-badge">
+                    <i class="bi bi-shield-check"></i> Recommandé
+                </span>
+            </button>
 
-            <div style="text-align:center; margin-bottom:1rem;">
-                <p style="color:var(--text-muted); font-size:.8rem; margin-bottom:.75rem;">
-                    Après inscription, activez la connexion biométrique
-                </p>
-                <button id="btn-register-passkey" class="btn-outline-glow btn w-100">
-                    <i class="bi bi-fingerprint me-2"></i> Créer + activer Passkey
-                </button>
+            <div class="auth-divider">
+                <span>OU</span>
             </div>
 
-            <p style="text-align:center; color:var(--text-muted); font-size:.875rem; margin:0;">
-                Déjà un compte ?
-                <a href="{{ path('app_login') }}" style="color:var(--accent-violet); text-decoration:none; font-weight:600;">
-                    Se connecter
+            <div class="auth-footer">
+                <span>Déjà un compte ? </span>
+                <a href="{{ path('app_login') }}" class="auth-link">
+                    Se connecter <i class="bi bi-arrow-right ms-1"></i>
                 </a>
-            </p>
+            </div>
         </div>
     </div>
 </div>
 {% endblock %}
 
 {% block javascripts %}
+{{ parent() }}
 <script type="module">
     import { registerWithPassword, registerPasskey } from '/js/auth.js';
 
-    const showAlert = (msg, type = 'danger') => {
-        document.getElementById('alert-box').innerHTML =
-            `<div class="alert-${type}-custom p-3" style="border-radius:10px; font-size:.875rem;">
-                <i class="bi bi-${type === 'success' ? 'check-circle' : 'exclamation-circle'} me-2"></i>${msg}
-            </div>`;
+    const showAlert = (message, type = 'error') => {
+        const alertBox = document.getElementById('alert-box');
+        const icon = type === 'success' ? 'check-circle' : 'exclamation-circle';
+        alertBox.innerHTML = `
+            <div class="alert-message alert-${type === 'success' ? 'success' : ''}">
+                <i class="bi bi-${icon}"></i>
+                ${message}
+            </div>
+        `;
     };
 
-    const setLoading = (btn, loading, text = 'Chargement...') => {
-        btn.disabled = loading;
-        btn.innerHTML = loading
-            ? `<span class="spinner-border spinner-border-sm me-2"></span> ${text}`
-            : btn.dataset.original;
+    const setLoading = (button, isLoading, text = 'Chargement...') => {
+        if (isLoading) {
+            button.disabled = true;
+            button.innerHTML = `<span class="spinner"></span> ${text}`;
+        } else {
+            button.disabled = false;
+            button.innerHTML = button.dataset.original;
+        }
+    };
+
+    // Password strength indicator
+    const passwordInput = document.getElementById('password');
+    const strengthBars = document.querySelectorAll('.strength-bar');
+
+    passwordInput.addEventListener('input', () => {
+        const password = passwordInput.value;
+        let strength = 0;
+        
+        if (password.length >= 6) strength++;
+        if (password.match(/[a-z]/) && password.match(/[A-Z]/)) strength++;
+        if (password.match(/[0-9]/) && password.match(/[^a-zA-Z0-9]/)) strength++;
+        
+        strengthBars.forEach((bar, index) => {
+            bar.classList.remove('weak', 'medium', 'strong', 'active');
+            if (index < strength) {
+                bar.classList.add('active');
+                if (strength === 1) bar.classList.add('weak');
+                else if (strength === 2) bar.classList.add('medium');
+                else if (strength === 3) bar.classList.add('strong');
+            }
+        });
+    });
+
+    const validateForm = (email, password, confirm) => {
+        if (!email) return 'Email requis';
+        if (!email.includes('@') || !email.includes('.')) return 'Email invalide';
+        if (password.length < 6) return 'Mot de passe trop court (minimum 6 caractères)';
+        if (password !== confirm) return 'Les mots de passe ne correspondent pas';
+        return null;
     };
 
     document.addEventListener('DOMContentLoaded', () => {
         const btnReg = document.getElementById('btn-register');
         const btnPass = document.getElementById('btn-register-passkey');
+        
         btnReg.dataset.original = btnReg.innerHTML;
         btnPass.dataset.original = btnPass.innerHTML;
 
-        const getFormData = () => ({
-            email: document.getElementById('email').value.trim(),
-            password: document.getElementById('password').value,
-            confirm: document.getElementById('confirm').value,
-        });
-
-        const validate = ({ email, password, confirm }) => {
-            if (!email) return 'Email obligatoire.';
-            if (password.length < 6) return 'Mot de passe trop court (min. 6 caractères).';
-            if (password !== confirm) return 'Les mots de passe ne correspondent pas.';
-            return null;
-        };
-
         btnReg.addEventListener('click', async () => {
-            const data = getFormData();
-            const error = validate(data);
-            if (error) return showAlert(error);
+            const email = document.getElementById('email').value.trim();
+            const password = document.getElementById('password').value;
+            const confirm = document.getElementById('confirm').value;
+
+            const error = validateForm(email, password, confirm);
+            if (error) {
+                showAlert(error);
+                return;
+            }
+
             setLoading(btnReg, true, 'Création...');
+
             try {
-                await registerWithPassword(data.email, data.password);
-                showAlert('Compte créé ! Redirection...', 'success');
-                setTimeout(() => window.location.href = '/events', 800);
-            } catch(e) {
-                showAlert(e.message);
+                await registerWithPassword(email, password);
+                showAlert('Compte créé avec succès ! Redirection...', 'success');
+                setTimeout(() => window.location.href = '/events', 1500);
+            } catch (error) {
+                showAlert(error.message || 'Erreur lors de la création du compte');
                 setLoading(btnReg, false);
             }
         });
 
         btnPass.addEventListener('click', async () => {
-            const data = getFormData();
-            const error = validate(data);
-            if (error) return showAlert(error);
+            const email = document.getElementById('email').value.trim();
+            const password = document.getElementById('password').value;
+            const confirm = document.getElementById('confirm').value;
+
+            const error = validateForm(email, password, confirm);
+            if (error) {
+                showAlert(error);
+                return;
+            }
+
             setLoading(btnPass, true, 'Création...');
+
             try {
-                await registerWithPassword(data.email, data.password);
-                await registerPasskey(data.email);
+                await registerWithPassword(email, password);
+                await registerPasskey(email);
                 showAlert('Compte créé avec Passkey ! Redirection...', 'success');
-                setTimeout(() => window.location.href = '/events', 800);
-            } catch(e) {
-                showAlert(e.message);
+                setTimeout(() => window.location.href = '/events', 1500);
+            } catch (error) {
+                showAlert(error.message || 'Erreur lors de la création avec Passkey');
                 setLoading(btnPass, false);
             }
         });

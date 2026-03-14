@@ -89,10 +89,7 @@ class AdminController extends AbstractController
         return $this->redirectToRoute('admin_event_index');
     }
 
-    // -------------------------------------------------------------------------
-    // Reservations
-    // -------------------------------------------------------------------------
-
+  
     #[Route('/events/{id}/reservations', name: 'event_reservations', methods: ['GET'], requirements: ['id' => '\d+'])]
     public function eventReservations(Event $event): Response
     {
