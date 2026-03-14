@@ -1,0 +1,82 @@
+{% extends 'admin/base_admin.html.twig' %}
+{% block title %}Nouvel événement{% endblock %}
+{% block page_title %}
+    <span class="text-gradient">Nouvel événement</span>
+{% endblock %}
+
+{% block content %}
+
+<div style="max-width:700px;">
+    <a href="{{ path('admin_event_index') }}" class="btn-admin-ghost mb-4"
+       style="display:inline-flex;">
+        <i class="bi bi-arrow-left"></i> Retour
+    </a>
+
+    <div class="admin-card">
+        <div class="admin-card-header">
+            <div style="font-weight:600;">
+                <i class="bi bi-plus-circle me-2" style="color:var(--accent-violet);"></i>
+                Créer un événement
+            </div>
+        </div>
+        <div style="padding:1.5rem;">
+            {{ form_start(form, {
+                'attr': {
+                    'enctype': 'multipart/form-data',
+                    'novalidate': 'novalidate'
+                }
+            }) }}
+
+            <div class="row g-3">
+                <div class="col-12 admin-form-group">
+                    <label class="admin-label">Titre *</label>
+                    {{ form_widget(form.title, {'attr': {'class': 'admin-input'}}) }}
+                    <div style="color:#f87171; font-size:.75rem; margin-top:.3rem;">{{ form_errors(form.title) }}</div>
+                </div>
+
+                <div class="col-12 admin-form-group">
+                    <label class="admin-label">Description *</label>
+                    {{ form_widget(form.description, {'attr': {'class': 'admin-input', 'rows': 4}}) }}
+                    <div style="color:#f87171; font-size:.75rem; margin-top:.3rem;">{{ form_errors(form.description) }}</div>
+                </div>
+
+                <div class="col-md-6 admin-form-group">
+                    <label class="admin-label">Date et heure *</label>
+                    {{ form_widget(form.date, {'attr': {'class': 'admin-input'}}) }}
+                    <div style="color:#f87171; font-size:.75rem; margin-top:.3rem;">{{ form_errors(form.date) }}</div>
+                </div>
+
+                <div class="col-md-6 admin-form-group">
+                    <label class="admin-label">Nombre de places *</label>
+                    {{ form_widget(form.seats, {'attr': {'class': 'admin-input'}}) }}
+                    <div style="color:#f87171; font-size:.75rem; margin-top:.3rem;">{{ form_errors(form.seats) }}</div>
+                </div>
+
+                <div class="col-12 admin-form-group">
+                    <label class="admin-label">Lieu *</label>
+                    {{ form_widget(form.location, {'attr': {'class': 'admin-input'}}) }}
+                    <div style="color:#f87171; font-size:.75rem; margin-top:.3rem;">{{ form_errors(form.location) }}</div>
+                </div>
+
+                <div class="col-12 admin-form-group">
+                    <label class="admin-label">Image (JPG, PNG, WEBP — max 2MB)</label>
+                    {{ form_widget(form.imageFile, {'attr': {'class': 'admin-input', 'style': 'padding:.5rem;'}}) }}
+                    <div style="color:#f87171; font-size:.75rem; margin-top:.3rem;">{{ form_errors(form.imageFile) }}</div>
+                </div>
+            </div>
+
+            <div style="display:flex; gap:.75rem; margin-top:1.5rem;">
+                <button type="submit" class="btn-admin-primary">
+                    <i class="bi bi-check-lg"></i> Créer l'événement
+                </button>
+                <a href="{{ path('admin_event_index') }}" class="btn-admin-ghost">
+                    Annuler
+                </a>
+            </div>
+
+            {{ form_end(form) }}
+        </div>
+    </div>
+</div>
+
+{% endblock %}

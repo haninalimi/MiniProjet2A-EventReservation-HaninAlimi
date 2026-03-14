@@ -1,0 +1,97 @@
+{% extends 'admin/base_admin.html.twig' %}
+{% block title %}Modifier — {{ event.title }}{% endblock %}
+{% block page_title %}
+    <span class="text-gradient">Modifier l'événement</span>
+{% endblock %}
+
+{% block content %}
+
+<div style="max-width:700px;">
+    <a href="{{ path('admin_event_index') }}" class="btn-admin-ghost mb-4"
+       style="display:inline-flex;">
+        <i class="bi bi-arrow-left"></i> Retour
+    </a>
+
+    <div class="admin-card">
+        <div class="admin-card-header">
+            <div style="font-weight:600;">
+                <i class="bi bi-pencil me-2" style="color:#f59e0b;"></i>
+                {{ event.title }}
+            </div>
+            <span class="badge-admin badge-warning">Modification</span>
+        </div>
+        <div style="padding:1.5rem;">
+
+            {% if event.image %}
+            <div style="margin-bottom:1.5rem; padding:1rem; background:rgba(255,255,255,.03); border-radius:10px; border:1px solid var(--border-color);">
+                <div style="font-size:.75rem; color:var(--text-muted); margin-bottom:.5rem;">
+                    Image actuelle
+                </div>
+                <img src="{{ asset('uploads/events/' ~ event.image) }}"
+                     alt="{{ event.title }}"
+                     style="height:100px; border-radius:8px; object-fit:cover; border:1px solid var(--border-color);">
+            </div>
+            {% endif %}
+
+            {{ form_start(form, {
+                'attr': {
+                    'enctype': 'multipart/form-data',
+                    'novalidate': 'novalidate'
+                }
+            }) }}
+
+            <div class="row g-3">
+                <div class="col-12 admin-form-group">
+                    <label class="admin-label">Titre *</label>
+                    {{ form_widget(form.title, {'attr': {'class': 'admin-input'}}) }}
+                    <div style="color:#f87171; font-size:.75rem; margin-top:.3rem;">{{ form_errors(form.title) }}</div>
+                </div>
+
+                <div class="col-12 admin-form-group">
+                    <label class="admin-label">Description *</label>
+                    {{ form_widget(form.description, {'attr': {'class': 'admin-input', 'rows': 4}}) }}
+                    <div style="color:#f87171; font-size:.75rem; margin-top:.3rem;">{{ form_errors(form.description) }}</div>
+                </div>
+
+                <div class="col-md-6 admin-form-group">
+                    <label class="admin-label">Date et heure *</label>
+                    {{ form_widget(form.date, {'attr': {'class': 'admin-input'}}) }}
+                    <div style="color:#f87171; font-size:.75rem; margin-top:.3rem;">{{ form_errors(form.date) }}</div>
+                </div>
+
+                <div class="col-md-6 admin-form-group">
+                    <label class="admin-label">Nombre de places *</label>
+                    {{ form_widget(form.seats, {'attr': {'class': 'admin-input'}}) }}
+                    <div style="color:#f87171; font-size:.75rem; margin-top:.3rem;">{{ form_errors(form.seats) }}</div>
+                </div>
+
+                <div class="col-12 admin-form-group">
+                    <label class="admin-label">Lieu *</label>
+                    {{ form_widget(form.location, {'attr': {'class': 'admin-input'}}) }}
+                    <div style="color:#f87171; font-size:.75rem; margin-top:.3rem;">{{ form_errors(form.location) }}</div>
+                </div>
+
+                <div class="col-12 admin-form-group">
+                    <label class="admin-label">
+                        Nouvelle image (laisser vide pour garder l'actuelle)
+                    </label>
+                    {{ form_widget(form.imageFile, {'attr': {'class': 'admin-input', 'style': 'padding:.5rem;'}}) }}
+                    <div style="color:#f87171; font-size:.75rem; margin-top:.3rem;">{{ form_errors(form.imageFile) }}</div>
+                </div>
+            </div>
+
+            <div style="display:flex; gap:.75rem; margin-top:1.5rem;">
+                <button type="submit" class="btn-admin-primary">
+                    <i class="bi bi-check-lg"></i> Enregistrer
+                </button>
+                <a href="{{ path('admin_event_index') }}" class="btn-admin-ghost">
+                    Annuler
+                </a>
+            </div>
+
+            {{ form_end(form) }}
+        </div>
+    </div>
+</div>
+
+{% endblock %}

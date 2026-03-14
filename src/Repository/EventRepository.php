@@ -40,4 +40,21 @@ class EventRepository extends ServiceEntityRepository
     //            ->getOneOrNullResult()
     //        ;
     //    }
+
+    public function save(Event $event, bool $flush = false): void
+{
+    $this->getEntityManager()->persist($event);
+    if ($flush) {
+        $this->getEntityManager()->flush();
+    }
+}
+
+public function remove(Event $event, bool $flush = false): void
+{
+    $this->getEntityManager()->remove($event);
+    if ($flush) {
+        $this->getEntityManager()->flush();
+    }
+}
+
 }
