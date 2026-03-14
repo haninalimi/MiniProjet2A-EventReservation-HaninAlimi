@@ -1,0 +1,45 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Réservation confirmée{% endblock %}
+
+{% block body %}
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-6 text-center">
+            <div class="card shadow">
+                <div class="card-body p-5">
+                    <i class="bi bi-check-circle-fill text-success display-1"></i>
+                    <h2 class="fw-bold mt-3">Réservation confirmée !</h2>
+                    <p class="text-muted">Merci <strong>{{ reservation.name }}</strong>,
+                    votre réservation a bien été enregistrée.</p>
+
+                    <hr>
+
+                    <ul class="list-unstyled text-start">
+                        <li class="mb-2">
+                            <i class="bi bi-calendar3 text-primary me-2"></i>
+                            <strong>Événement :</strong> {{ reservation.event.title }}
+                        </li>
+                        <li class="mb-2">
+                            <i class="bi bi-geo-alt text-danger me-2"></i>
+                            <strong>Lieu :</strong> {{ reservation.event.location }}
+                        </li>
+                        <li class="mb-2">
+                            <i class="bi bi-clock text-warning me-2"></i>
+                            <strong>Date :</strong> {{ reservation.event.date|date('d/m/Y à H:i') }}
+                        </li>
+                        <li class="mb-2">
+                            <i class="bi bi-envelope text-info me-2"></i>
+                            <strong>Email :</strong> {{ reservation.email }}
+                        </li>
+                    </ul>
+
+                    <a href="{{ path('event_index') }}" class="btn btn-primary mt-3">
+                        <i class="bi bi-arrow-left"></i> Retour aux événements
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

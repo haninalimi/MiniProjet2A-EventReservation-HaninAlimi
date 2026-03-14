@@ -1,17 +1,94 @@
 <!DOCTYPE html>
-<html>
-    <head>
-        <meta charset="UTF-8">
-        <title>{% block title %}Welcome!{% endblock %}</title>
-        <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 128 128%22><text y=%221.2em%22 font-size=%2296%22>⚫️</text><text y=%221.3em%22 x=%220.2em%22 font-size=%2276%22 fill=%22%23fff%22>sf</text></svg>">
-        {% block stylesheets %}
-        {% endblock %}
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Event Reservation{% endblock %}</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css" rel="stylesheet">
+    <style>
+        .navbar-brand { font-weight: 700; font-size: 1.4rem; }
+        .card { transition: transform .2s, box-shadow .2s; }
+        .card:hover { transform: translateY(-4px); box-shadow: 0 8px 24px rgba(0,0,0,.12); }
+        .badge-seats { font-size: .75rem; }
+        .hero { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); }
+        .sidebar { min-height: calc(100vh - 56px); background: #2c3e50; }
+        .sidebar .nav-link { color: #bdc3c7; padding: .75rem 1.25rem; }
+        .sidebar .nav-link:hover, .sidebar .nav-link.active { color: #fff; background: rgba(255,255,255,.1); border-radius: 8px; }
+        .sidebar .nav-link i { margin-right: 8px; }
+    </style>
+    {% block stylesheets %}{% endblock %}
+</head>
+<body class="bg-light">
 
-        {% block javascripts %}
-            {% block importmap %}{{ importmap('app') }}{% endblock %}
-        {% endblock %}
-    </head>
-    <body>
-        {% block body %}{% endblock %}
-    </body>
+{% block navbar %}
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+    <div class="container">
+        <a class="navbar-brand" href="{{ path('event_index') }}">
+            <i class="bi bi-calendar-event"></i> EventApp
+        </a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav me-auto">
+                <li class="nav-item">
+                    <a class="nav-link" href="{{ path('event_index') }}">
+                        <i class="bi bi-calendar3"></i> Événements
+                    </a>
+                </li>
+            </ul>
+            <ul class="navbar-nav">
+                <li class="nav-item" id="nav-user" style="display:none">
+                    <span class="nav-link text-light">
+                        <i class="bi bi-person-circle"></i>
+                        <span id="nav-email"></span>
+                    </span>
+                </li>
+                <li class="nav-item" id="nav-logout" style="display:none">
+                    <a class="nav-link" href="#" onclick="handleLogout()">
+                        <i class="bi bi-box-arrow-right"></i> Déconnexion
+                    </a>
+                </li>
+                <li class="nav-item" id="nav-login">
+                    <a class="nav-link" href="{{ path('app_login') }}">
+                        <i class="bi bi-box-arrow-in-right"></i> Connexion
+                    </a>
+                </li>
+            </ul>
+        </div>
+    </div>
+</nav>
+{% endblock %}
+
+<main>
+    {% block body %}{% endblock %}
+</main>
+
+<footer class="bg-dark text-light py-4 mt-5">
+    <div class="container text-center">
+        <p class="mb-0">© 2026 EventApp — FIA3-GL ISSAT Sousse</p>
+    </div>
+</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script type="module">
+    import { TokenManager, getCurrentUser, logout } from '/js/auth.js';
+
+    window.handleLogout = () => { logout(); };
+
+    document.addEventListener('DOMContentLoaded', async () => {
+        if (TokenManager.isAuthenticated()) {
+            document.getElementById('nav-login').style.display = 'none';
+            document.getElementById('nav-logout').style.display = 'block';
+            document.getElementById('nav-user').style.display = 'block';
+            try {
+                const user = await getCurrentUser();
+                document.getElementById('nav-email').textContent = user.email;
+            } catch (e) {}
+        }
+    });
+</script>
+{% block javascripts %}{% endblock %}
+</body>
 </html>

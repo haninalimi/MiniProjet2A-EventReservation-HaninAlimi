@@ -40,4 +40,12 @@ class ReservationRepository extends ServiceEntityRepository
     //            ->getOneOrNullResult()
     //        ;
     //    }
+
+    public function save(Reservation $reservation, bool $flush = false): void
+{
+    $this->getEntityManager()->persist($reservation);
+    if ($flush) {
+        $this->getEntityManager()->flush();
+    }
+}
 }
