@@ -1,89 +1,89 @@
 {% extends 'admin/base_admin.html.twig' %}
 {% block title %}Événements{% endblock %}
-{% block page_title %}
-    <span class="text-gradient">Événements</span>
-{% endblock %}
+{% block page_title %}Événements{% endblock %}
 
 {% block content %}
 
-<div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1.5rem;">
-    <div style="color:var(--text-muted); font-size:.875rem;">
-        {{ events|length }} événement(s) au total
+<div class="adm-page-header">
+    <div>
+        <div class="adm-page-title">Gestion des événements</div>
+        <div class="adm-page-desc">{{ events|length }} événement(s) au total</div>
     </div>
-    <a href="{{ path('admin_event_new') }}" class="btn-admin-primary">
-        <i class="bi bi-plus-lg"></i> Nouvel événement
+    <a href="{{ path('admin_event_new') }}" class="adm-btn adm-btn-primary">
+        <i class="bi bi-plus"></i> Nouvel événement
     </a>
 </div>
 
-<div class="admin-card">
-    <div style="overflow-x:auto;">
-        <table class="admin-table">
-            <thead>
-                <tr>
-                    <th>#</th>
-                    <th>Titre</th>
-                    <th>Date</th>
-                    <th>Lieu</th>
-                    <th>Places</th>
-                    <th>Réservations</th>
-                    <th>Actions</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for event in events %}
-                <tr>
-                    <td style="color:var(--text-muted);">{{ event.id }}</td>
-                    <td>
-                        <div style="font-weight:600; color:var(--text-primary);">{{ event.title }}</div>
-                        {% if event.image %}
-                            <div style="font-size:.7rem; color:var(--text-muted); margin-top:2px;">
-                                <i class="bi bi-image me-1"></i>Image
-                            </div>
-                        {% endif %}
-                    </td>
-                    <td>{{ event.date|date('d/m/Y H:i') }}</td>
-                    <td>{{ event.location }}</td>
-                    <td>
-                        <span class="badge-admin badge-info">{{ event.seats }}</span>
-                    </td>
-                    <td>
-                        <a href="{{ path('admin_event_reservations', {id: event.id}) }}"
-                           class="badge-admin badge-success" style="text-decoration:none; cursor:pointer;">
-                            <i class="bi bi-people me-1"></i>Voir
-                        </a>
-                    </td>
-                    <td>
-                        <div style="display:flex; gap:.4rem;">
-                            <a href="{{ path('admin_event_edit', {id: event.id}) }}"
-                               class="btn-icon warning" title="Modifier">
-                                <i class="bi bi-pencil"></i>
-                            </a>
-                            <form method="post"
-                                  action="{{ path('admin_event_delete', {id: event.id}) }}"
-                                  style="display:inline;"
-                                  onsubmit="return confirm('Supprimer « {{ event.title }} » ?')">
-                                <input type="hidden" name="_token"
-                                       value="{{ csrf_token('delete_event_' ~ event.id) }}">
-                                <button type="submit" class="btn-icon danger" title="Supprimer">
-                                    <i class="bi bi-trash"></i>
-                                </button>
-                            </form>
-                        </div>
-                    </td>
-                </tr>
-                {% else %}
-                <tr>
-                    <td colspan="7" style="text-align:center; padding:3rem; color:var(--text-muted);">
-                        Aucun événement.
-                        <a href="{{ path('admin_event_new') }}" style="color:var(--accent-violet);">
-                            Créer le premier
-                        </a>
-                    </td>
-                </tr>
-                {% endfor %}
-            </tbody>
-        </table>
+<div class="adm-card">
+    <div class="adm-card-header">
+        <div class="adm-card-title">
+            <i class="bi bi-table"></i> Liste des événements
+        </div>
+        <div style="font-family:'JetBrains Mono',monospace;font-size:.65rem;color:var(--adm-text3);">
+            {{ events|length }} résultat(s)
+        </div>
     </div>
+    <table class="adm-table">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Titre</th>
+                <th>Date</th>
+                <th>Lieu</th>
+                <th>Places</th>
+                <th>Image</th>
+                <th>Réservations</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for event in events %}
+            <tr>
+                <td><span style="font-family:'JetBrains Mono',monospace;color:var(--adm-text3);">#{{ event.id }}</span></td>
+                <td class="adm-td-primary">{{ event.title }}</td>
+                <td style="font-family:'JetBrains Mono',monospace;font-size:.72rem;">{{ event.date|date('d/m/Y H:i') }}</td>
+                <td>{{ event.location }}</td>
+                <td><span class="adm-badge adm-badge-gold">{{ event.seats }}</span></td>
+                <td>
+                    {% if event.image %}
+                        <span class="adm-badge adm-badge-green"><i class="bi bi-check"></i> Oui</span>
+                    {% else %}
+                        <span class="adm-badge" style="color:var(--adm-text3);border-color:var(--adm-border);">Non</span>
+                    {% endif %}
+                </td>
+                <td>
+                    <a href="{{ path('admin_event_reservations', {id: event.id}) }}"
+                       class="adm-badge adm-badge-blue" style="text-decoration:none;cursor:pointer;">
+                        <i class="bi bi-people"></i> Voir
+                    </a>
+                </td>
+                <td>
+                    <div style="display:flex;gap:.35rem;">
+                        <a href="{{ path('admin_event_edit', {id: event.id}) }}"
+                           class="adm-btn adm-btn-secondary" style="padding:.3rem .55rem;" title="Modifier">
+                            <i class="bi bi-pencil"></i>
+                        </a>
+                        <form method="post" action="{{ path('admin_event_delete', {id: event.id}) }}"
+                              style="display:inline;"
+                              onsubmit="return confirm('Supprimer « {{ event.title }} » ?')">
+                            <input type="hidden" name="_token" value="{{ csrf_token('delete_event_' ~ event.id) }}">
+                            <button type="submit" class="adm-btn adm-btn-danger" style="padding:.3rem .55rem;" title="Supprimer">
+                                <i class="bi bi-trash"></i>
+                            </button>
+                        </form>
+                    </div>
+                </td>
+            </tr>
+            {% else %}
+            <tr>
+                <td colspan="8" class="adm-empty">
+                    <i class="bi bi-calendar-x"></i>
+                    <p>Aucun événement. <a href="{{ path('admin_event_new') }}" style="color:var(--adm-accent);">Créer le premier</a></p>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
 </div>
 
 {% endblock %}

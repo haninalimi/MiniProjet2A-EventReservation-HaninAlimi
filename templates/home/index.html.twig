@@ -45,7 +45,6 @@
     transform: rotate(45deg);
 }
 
-/* Right visual */
 .hero-right-art {
     position: absolute;
     right: 0; top: 0; bottom: 0;
@@ -752,20 +751,7 @@
                 </svg>
             </div>
         </div>
-        <div class="float-badge" style="bottom:22%;left:-15px;">
-            <div class="badge-icon" style="background:rgba(197,165,114,0.12);">🔐</div>
-            <div>
-                <div class="badge-text-main">Passkey FIDO2</div>
-                <div class="badge-text-sub">Authentification biométrique</div>
-            </div>
-        </div>
-        <div class="float-badge" style="top:20%;right:5px;">
-            <div class="badge-icon" style="background:rgba(197,165,114,0.12);">⚡</div>
-            <div>
-                <div class="badge-text-main">30 secondes</div>
-                <div class="badge-text-sub">Pour réserver</div>
-            </div>
-        </div>
+       
     </div>
 
     <div class="hero-content">
@@ -800,7 +786,6 @@
     </div>
 </section>
 
-{# ── SÉPARATEUR 1 ── #}
 <div class="page-sep reveal-lux">
     <div class="sep-corner tl"></div><div class="sep-corner tr"></div>
     <div class="sep-corner bl"></div><div class="sep-corner br"></div>
@@ -816,7 +801,6 @@
     </div>
 </div>
 
-{# ════════════════ SECTION 2 : STATS ════════════════ #}
 <section class="book-section" data-sec="1" data-page="— II —">
     <div class="stats-lux reveal-lux">
         <div class="stat-cell">
@@ -842,7 +826,6 @@
     </div>
 </section>
 
-{# ── SÉPARATEUR 2 ── #}
 <div class="page-sep reveal-lux">
     <div class="sep-corner tl"></div><div class="sep-corner tr"></div>
     <div class="sep-corner bl"></div><div class="sep-corner br"></div>
@@ -858,7 +841,6 @@
     </div>
 </div>
 
-{# ════════════════ SECTION 3 : HOW IT WORKS ════════════════ #}
 <section class="book-section how-lux" data-sec="2" data-page="— III —" id="how">
     <div class="how-grid">
         <div class="reveal-lux">
@@ -911,7 +893,6 @@
     </div>
 </section>
 
-{# ── SÉPARATEUR 3 ── #}
 <div class="page-sep reveal-lux" style="background:var(--bg2);">
     <div class="sep-corner tl"></div><div class="sep-corner tr"></div>
     <div class="sep-corner bl"></div><div class="sep-corner br"></div>
@@ -927,7 +908,6 @@
     </div>
 </div>
 
-{# ════════════════ SECTION 4 : EVENTS ════════════════ #}
 {% if featuredEvents is not empty %}
 <section class="book-section events-lux" data-sec="3" data-page="— IV —">
     <div class="events-header">
@@ -944,7 +924,6 @@
         {% for event in featuredEvents %}
         <div class="flip-3d reveal-lux">
             <div class="flip-inner">
-                {# Recto #}
                 <div class="flip-f">
                     <div class="card-img-wrap">
                         {% if event.image %}
@@ -970,7 +949,6 @@
                         </div>
                     </div>
                 </div>
-                {# Verso #}
                 <div class="flip-b">
                     <div class="back-etitle">{{ event.title }}</div>
                     <div class="seats-track">
@@ -992,7 +970,6 @@
 </section>
 {% endif %}
 
-{# ── SÉPARATEUR 4 ── #}
 <div class="page-sep reveal-lux">
     <div class="sep-corner tl"></div><div class="sep-corner tr"></div>
     <div class="sep-corner bl"></div><div class="sep-corner br"></div>
@@ -1008,7 +985,6 @@
     </div>
 </div>
 
-{# ════════════════ SECTION 5 : TESTIMONIALS ════════════════ #}
 <section class="book-section testi-lux" data-sec="4" data-page="— V —">
     <div class="reveal-lux" style="text-align:center;max-width:1200px;margin:0 auto;">
         <div class="eyebrow" style="justify-content:center;">Marginalia</div>
@@ -1046,7 +1022,6 @@
     </div>
 </section>
 
-{# ── SÉPARATEUR 5 ── #}
 <div class="page-sep reveal-lux" style="background:var(--bg2);">
     <div class="sep-corner tl"></div><div class="sep-corner tr"></div>
     <div class="sep-corner bl"></div><div class="sep-corner br"></div>
@@ -1062,7 +1037,6 @@
     </div>
 </div>
 
-{# ════════════════ SECTION 6 : CTA ════════════════ #}
 <section class="book-section cta-lux" data-sec="5" data-page="— VI —">
     <div class="cta-frame reveal-lux">
         <div class="cta-collector">Édition Collector</div>
@@ -1086,7 +1060,6 @@
 {% block javascripts %}
 <script>
 (function() {
-    /* Typewriter */
     const phrases = [
     'Concerts · Conférences · Workshops',
     'Réservez vos places en 30 secondes',
@@ -1104,7 +1077,6 @@
     }
     setTimeout(tick, 1600);
 
-    /* Realtime counter update (simulated) */
     setInterval(() => {
         const seats = document.getElementById('hero-seats');
         if (seats) {

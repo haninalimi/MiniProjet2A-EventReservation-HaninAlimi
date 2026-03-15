@@ -1,77 +1,86 @@
 {% extends 'admin/base_admin.html.twig' %}
 {% block title %}Nouvel événement{% endblock %}
-{% block page_title %}
-    <span class="text-gradient">Nouvel événement</span>
-{% endblock %}
+{% block page_title %}Nouvel événement{% endblock %}
 
 {% block content %}
 
-<div style="max-width:700px;">
-    <a href="{{ path('admin_event_index') }}" class="btn-admin-ghost mb-4"
-       style="display:inline-flex;">
+<div class="adm-page-header">
+    <div>
+        <div class="adm-page-title">Créer un événement</div>
+        <div class="adm-page-desc">Ajout d'un nouvel événement au catalogue</div>
+    </div>
+    <a href="{{ path('admin_event_index') }}" class="adm-btn adm-btn-ghost">
         <i class="bi bi-arrow-left"></i> Retour
     </a>
+</div>
 
-    <div class="admin-card">
-        <div class="admin-card-header">
-            <div style="font-weight:600;">
-                <i class="bi bi-plus-circle me-2" style="color:var(--accent-violet);"></i>
-                Créer un événement
+<div style="max-width:680px;">
+    <div class="adm-card">
+        <div class="adm-card-header">
+            <div class="adm-card-title">
+                <i class="bi bi-plus-circle"></i>
+                Informations de l'événement
             </div>
         </div>
-        <div style="padding:1.5rem;">
-            {{ form_start(form, {
-                'attr': {
-                    'enctype': 'multipart/form-data',
-                    'novalidate': 'novalidate'
-                }
-            }) }}
+        <div style="padding:1.25rem;">
+            {{ form_start(form) }}
 
-            <div class="row g-3">
-                <div class="col-12 admin-form-group">
-                    <label class="admin-label">Titre *</label>
-                    {{ form_widget(form.title, {'attr': {'class': 'admin-input'}}) }}
-                    <div style="color:#f87171; font-size:.75rem; margin-top:.3rem;">{{ form_errors(form.title) }}</div>
+            <div class="adm-form-group">
+                <label class="adm-label">Titre</label>
+                {{ form_widget(form.title, {'attr': {'class': 'adm-input', 'placeholder': 'Titre de l\'événement'}}) }}
+                {% if form_errors(form.title) %}
+                    <div class="adm-field-error">{{ form_errors(form.title) }}</div>
+                {% endif %}
+            </div>
+
+            <div class="adm-form-group">
+                <label class="adm-label">Description</label>
+                {{ form_widget(form.description, {'attr': {'class': 'adm-input', 'rows': 4, 'placeholder': 'Description...', 'style': 'resize:vertical;min-height:100px;'}}) }}
+                {% if form_errors(form.description) %}
+                    <div class="adm-field-error">{{ form_errors(form.description) }}</div>
+                {% endif %}
+            </div>
+
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;">
+                <div class="adm-form-group">
+                    <label class="adm-label">Date et heure</label>
+                    {{ form_widget(form.date, {'attr': {'class': 'adm-input'}}) }}
+                    {% if form_errors(form.date) %}
+                        <div class="adm-field-error">{{ form_errors(form.date) }}</div>
+                    {% endif %}
                 </div>
-
-                <div class="col-12 admin-form-group">
-                    <label class="admin-label">Description *</label>
-                    {{ form_widget(form.description, {'attr': {'class': 'admin-input', 'rows': 4}}) }}
-                    <div style="color:#f87171; font-size:.75rem; margin-top:.3rem;">{{ form_errors(form.description) }}</div>
-                </div>
-
-                <div class="col-md-6 admin-form-group">
-                    <label class="admin-label">Date et heure *</label>
-                    {{ form_widget(form.date, {'attr': {'class': 'admin-input'}}) }}
-                    <div style="color:#f87171; font-size:.75rem; margin-top:.3rem;">{{ form_errors(form.date) }}</div>
-                </div>
-
-                <div class="col-md-6 admin-form-group">
-                    <label class="admin-label">Nombre de places *</label>
-                    {{ form_widget(form.seats, {'attr': {'class': 'admin-input'}}) }}
-                    <div style="color:#f87171; font-size:.75rem; margin-top:.3rem;">{{ form_errors(form.seats) }}</div>
-                </div>
-
-                <div class="col-12 admin-form-group">
-                    <label class="admin-label">Lieu *</label>
-                    {{ form_widget(form.location, {'attr': {'class': 'admin-input'}}) }}
-                    <div style="color:#f87171; font-size:.75rem; margin-top:.3rem;">{{ form_errors(form.location) }}</div>
-                </div>
-
-                <div class="col-12 admin-form-group">
-                    <label class="admin-label">Image (JPG, PNG, WEBP — max 2MB)</label>
-                    {{ form_widget(form.imageFile, {'attr': {'class': 'admin-input', 'style': 'padding:.5rem;'}}) }}
-                    <div style="color:#f87171; font-size:.75rem; margin-top:.3rem;">{{ form_errors(form.imageFile) }}</div>
+                <div class="adm-form-group">
+                    <label class="adm-label">Nombre de places</label>
+                    {{ form_widget(form.seats, {'attr': {'class': 'adm-input', 'min': 1, 'placeholder': '50'}}) }}
+                    {% if form_errors(form.seats) %}
+                        <div class="adm-field-error">{{ form_errors(form.seats) }}</div>
+                    {% endif %}
                 </div>
             </div>
 
-            <div style="display:flex; gap:.75rem; margin-top:1.5rem;">
-                <button type="submit" class="btn-admin-primary">
+            <div class="adm-form-group">
+                <label class="adm-label">Lieu</label>
+                {{ form_widget(form.location, {'attr': {'class': 'adm-input', 'placeholder': 'Lieu de l\'événement'}}) }}
+                {% if form_errors(form.location) %}
+                    <div class="adm-field-error">{{ form_errors(form.location) }}</div>
+                {% endif %}
+            </div>
+
+            {% if form.imageFile is defined %}
+            <div class="adm-form-group">
+                <label class="adm-label">Image (optionnelle)</label>
+                {{ form_widget(form.imageFile, {'attr': {'class': 'adm-input', 'style': 'padding:.35rem .75rem;'}}) }}
+                {% if form_errors(form.imageFile) %}
+                    <div class="adm-field-error">{{ form_errors(form.imageFile) }}</div>
+                {% endif %}
+            </div>
+            {% endif %}
+
+            <div style="display:flex;gap:.75rem;margin-top:1.5rem;padding-top:1.25rem;border-top:1px solid var(--adm-border);">
+                <button type="submit" class="adm-btn adm-btn-primary">
                     <i class="bi bi-check-lg"></i> Créer l'événement
                 </button>
-                <a href="{{ path('admin_event_index') }}" class="btn-admin-ghost">
-                    Annuler
-                </a>
+                <a href="{{ path('admin_event_index') }}" class="adm-btn adm-btn-ghost">Annuler</a>
             </div>
 
             {{ form_end(form) }}

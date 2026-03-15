@@ -1,67 +1,91 @@
 {% extends 'admin/base_admin.html.twig' %}
 {% block title %}Réservations — {{ event.title }}{% endblock %}
-{% block page_title %}
-    <span class="text-gradient">Réservations</span>
-{% endblock %}
+{% block page_title %}Réservations{% endblock %}
 
 {% block content %}
 
-<div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1.5rem;">
+<div class="adm-page-header">
     <div>
-        <div style="font-weight:700; font-size:1.1rem;">{{ event.title }}</div>
-        <div style="color:var(--text-muted); font-size:.8rem; margin-top:.25rem;">
-            <i class="bi bi-calendar3 me-1"></i>{{ event.date|date('d/m/Y à H:i') }}
-            <span class="mx-2">·</span>
-            <i class="bi bi-geo-alt me-1"></i>{{ event.location }}
+        <div class="adm-page-title">Réservations</div>
+        <div class="adm-page-desc">{{ event.title }} · {{ reservations|length }} réservation(s)</div>
+    </div>
+    <a href="{{ path('admin_event_index') }}" class="adm-btn adm-btn-ghost">
+        <i class="bi bi-arrow-left"></i> Retour aux événements
+    </a>
+</div>
+
+<div style="display:grid;grid-template-columns:repeat(3,1fr);gap:1rem;margin-bottom:1.5rem;">
+    <div class="adm-stat">
+        <div class="adm-stat-icon" style="background:rgba(197,165,114,0.1);">
+            <i class="bi bi-calendar3" style="color:var(--adm-accent);"></i>
+        </div>
+        <div>
+            <div class="adm-stat-num" style="color:var(--adm-accent);font-size:1rem;">{{ event.date|date('d/m/Y') }}</div>
+            <div class="adm-stat-lbl">Date de l'événement</div>
         </div>
     </div>
-    <div style="display:flex; gap:.75rem; align-items:center;">
-        <span class="badge-admin badge-success">
-            <i class="bi bi-people me-1"></i>{{ reservations|length }} réservation(s)
-        </span>
-        <a href="{{ path('admin_event_index') }}" class="btn-admin-ghost">
-            <i class="bi bi-arrow-left"></i> Retour
-        </a>
+    <div class="adm-stat">
+        <div class="adm-stat-icon" style="background:rgba(56,139,253,0.1);">
+            <i class="bi bi-people" style="color:var(--adm-blue);"></i>
+        </div>
+        <div>
+            <div class="adm-stat-num" style="color:var(--adm-blue);">{{ reservations|length }} / {{ event.seats }}</div>
+            <div class="adm-stat-lbl">Places réservées</div>
+        </div>
+    </div>
+    <div class="adm-stat">
+        <div class="adm-stat-icon" style="background:rgba(63,185,80,0.1);">
+            <i class="bi bi-geo-alt" style="color:var(--adm-green);"></i>
+        </div>
+        <div>
+            <div class="adm-stat-num" style="color:var(--adm-green);font-size:.9rem;">{{ event.location }}</div>
+            <div class="adm-stat-lbl">Lieu</div>
+        </div>
     </div>
 </div>
 
-<div class="admin-card">
-    <div style="overflow-x:auto;">
-        <table class="admin-table">
-            <thead>
-                <tr>
-                    <th>#</th>
-                    <th>Nom</th>
-                    <th>Email</th>
-                    <th>Téléphone</th>
-                    <th>Date de réservation</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for reservation in reservations %}
-                <tr>
-                    <td style="color:var(--text-muted);">{{ reservation.id }}</td>
-                    <td style="font-weight:600; color:var(--text-primary);">
-                        {{ reservation.name }}
-                    </td>
-                    <td>{{ reservation.email }}</td>
-                    <td>{{ reservation.phone ?? '—' }}</td>
-                    <td>
-                        <span class="badge-admin badge-info">
-                            {{ reservation.createdAt|date('d/m/Y H:i') }}
-                        </span>
-                    </td>
-                </tr>
-                {% else %}
-                <tr>
-                    <td colspan="5" style="text-align:center; padding:3rem; color:var(--text-muted);">
-                        Aucune réservation pour cet événement.
-                    </td>
-                </tr>
-                {% endfor %}
-            </tbody>
-        </table>
+<div class="adm-card">
+    <div class="adm-card-header">
+        <div class="adm-card-title">
+            <i class="bi bi-list-ul"></i> Liste des participants
+        </div>
+        <div style="font-family:'JetBrains Mono',monospace;font-size:.65rem;color:var(--adm-text3);">
+            {{ reservations|length }} participant(s)
+        </div>
     </div>
+    <table class="adm-table">
+        <thead>
+            <tr>
+                <th>#</th>
+                <th>Nom</th>
+                <th>Email</th>
+                <th>Téléphone</th>
+                <th>Date réservation</th>
+                <th>Statut</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for reservation in reservations %}
+            <tr>
+                <td><span style="font-family:'JetBrains Mono',monospace;color:var(--adm-text3);">{{ loop.index }}</span></td>
+                <td class="adm-td-primary">{{ reservation.name }}</td>
+                <td style="font-family:'JetBrains Mono',monospace;font-size:.72rem;">{{ reservation.email }}</td>
+                <td>{{ reservation.phone ?? '—' }}</td>
+                <td style="font-family:'JetBrains Mono',monospace;font-size:.72rem;">
+                    {{ reservation.createdAt ? reservation.createdAt|date('d/m/Y H:i') : '—' }}
+                </td>
+                <td><span class="adm-badge adm-badge-green"><i class="bi bi-check"></i> Confirmée</span></td>
+            </tr>
+            {% else %}
+            <tr>
+                <td colspan="6" class="adm-empty">
+                    <i class="bi bi-inbox"></i>
+                    <p>Aucune réservation pour cet événement</p>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
 </div>
 
 {% endblock %}
