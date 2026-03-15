@@ -1,3 +1,5 @@
+# config/packages/security.yaml
+
 security:
     password_hashers:
         Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface: 'auto'
@@ -17,22 +19,53 @@ security:
             pattern: ^/(_(profiler|wdt)|css|images|js)/
             security: false
 
+        # ── API publique (register / login JWT) ──────────────
         auth_api:
             pattern: ^/api/auth/(register|login)
             stateless: true
             security: false
 
+        # ── API sécurisée JWT ────────────────────────────────
         api:
             pattern: ^/api
             stateless: true
-            provider: app_user_provider  
+            provider: app_user_provider
             entry_point: jwt
             jwt: ~
             refresh_jwt:
                 check_path: /api/token/refresh
 
+        # ── Interface Admin (session classique) ──────────────
+        admin:
+            pattern: ^/admin
+            provider: app_admin_provider
+            form_login:
+                login_path: admin_login
+                check_path: admin_login
+                default_target_path: admin_dashboard
+                username_parameter: username
+                password_parameter: password
+                enable_csrf: true
+            logout:
+                path: admin_logout
+                target: admin_login
+
+        # ── Frontend utilisateur ─────────────────────────────
+        main:
+            pattern: ^/
+            lazy: true
+            provider: app_user_provider
+
     access_control:
+        # API
         - { path: ^/api/auth/(register|login), roles: PUBLIC_ACCESS }
-        - { path: ^/api/token/refresh, roles: PUBLIC_ACCESS }
-        - { path: ^/api/admin, roles: ROLE_ADMIN }
-        - { path: ^/api, roles: ROLE_USER }
+        - { path: ^/api/token/refresh,          roles: PUBLIC_ACCESS }
+        - { path: ^/api/admin,                  roles: ROLE_ADMIN }
+        - { path: ^/api,                        roles: ROLE_USER }
+
+        # Admin
+        - { path: ^/admin/login,  roles: PUBLIC_ACCESS }
+        - { path: ^/admin,        roles: ROLE_ADMIN }
+
+        # Frontend public
+        - { path: ^/,             roles: PUBLIC_ACCESS }

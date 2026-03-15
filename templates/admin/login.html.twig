@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="fr" data-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Connexion Admin — EventApp</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css" rel="stylesheet">
+    <style>
+        :root {
+            --bg:  #0d1117;
+            --bg2: #161b22;
+            --bg3: #1c2128;
+            --border: rgba(48,54,61,0.8);
+            --text:  #e6edf3;
+            --text2: #8b949e;
+            --text3: #484f58;
+            --accent: #c5a572;
+            --accent2: #e5c687;
+            --red: #f85149;
+        }
+        [data-theme="light"] {
+            --bg:  #f6f8fa;
+            --bg2: #ffffff;
+            --bg3: #f0f2f4;
+            --border: rgba(208,215,222,0.8);
+            --text:  #1f2328;
+            --text2: #656d76;
+            --text3: #adb5bd;
+        }
+
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: background .3s, color .3s;
+        }
+
+        .login-wrap {
+            width: 100%;
+            max-width: 380px;
+            padding: 1.5rem;
+        }
+
+        .login-header {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+        .login-logo {
+            display: inline-flex;
+            align-items: center;
+            gap: .65rem;
+            margin-bottom: 1.5rem;
+        }
+        .login-logo-mark {
+            width: 38px; height: 38px;
+            background: var(--accent);
+            border-radius: 7px;
+            display: flex; align-items: center; justify-content: center;
+            font-family: 'JetBrains Mono', monospace;
+            font-weight: 700; font-size: .85rem;
+            color: var(--bg);
+        }
+        .login-logo-name  { font-size: .95rem; font-weight: 600; color: var(--text); line-height: 1.2; }
+        .login-logo-sub   { font-size: .62rem; color: var(--text3); font-family: 'JetBrains Mono', monospace; }
+
+        .login-title { font-size: 1.15rem; font-weight: 600; color: var(--text); margin-bottom: .3rem; }
+        .login-sub   { font-size: .75rem; color: var(--text2); }
+
+        /* ── Card ── */
+        .login-card {
+            background: var(--bg2);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            padding: 1.75rem;
+        }
+
+        /* ── Form ── */
+        .fg { margin-bottom: .9rem; }
+        .fg label {
+            display: block;
+            font-size: .72rem;
+            font-weight: 500;
+            color: var(--text2);
+            margin-bottom: .35rem;
+        }
+        .fg input {
+            width: 100%;
+            background: var(--bg3);
+            border: 1px solid var(--border);
+            border-radius: 7px;
+            padding: .6rem .85rem;
+            color: var(--text);
+            font-family: 'Inter', sans-serif;
+            font-size: .82rem;
+            outline: none;
+            transition: border-color .15s;
+        }
+        .fg input:focus { border-color: var(--accent); background: rgba(197,165,114,0.04); }
+        .fg input::placeholder { color: var(--text3); }
+
+        .btn-submit {
+            display: block; width: 100%; text-align: center;
+            background: var(--accent);
+            color: var(--bg) !important;
+            border: none; border-radius: 7px;
+            padding: .65rem .9rem;
+            font-size: .85rem; font-weight: 600;
+            cursor: pointer; transition: all .15s;
+            font-family: 'Inter', sans-serif;
+            margin-top: 1.25rem;
+        }
+        .btn-submit:hover { background: var(--accent2); transform: translateY(-1px); }
+
+        .alert-error {
+            background: rgba(248,81,73,0.08);
+            border: 1px solid rgba(248,81,73,0.3);
+            color: var(--red);
+            border-radius: 7px;
+            padding: .65rem .85rem;
+            font-size: .78rem;
+            display: flex; align-items: center; gap: .5rem;
+            margin-bottom: 1rem;
+        }
+
+        .divider { height: 1px; background: var(--border); margin: 1.25rem 0; }
+
+        .login-footer {
+            text-align: center;
+            margin-top: 1.25rem;
+            font-size: .72rem;
+            color: var(--text3);
+        }
+        .login-footer a { color: var(--text2); text-decoration: none; transition: color .15s; }
+        .login-footer a:hover { color: var(--accent); }
+
+        .theme-btn {
+            position: fixed; top: 1rem; right: 1rem;
+            width: 34px; height: 34px;
+            display: flex; align-items: center; justify-content: center;
+            border: 1px solid var(--border); border-radius: 7px;
+            background: var(--bg2); color: var(--text2);
+            cursor: pointer; font-size: .9rem; transition: all .15s;
+        }
+        .theme-btn:hover { border-color: var(--accent); color: var(--accent); }
+    </style>
+</head>
+<body>
+
+<button class="theme-btn" id="themeBtn" title="Changer le thème">
+    <i class="bi bi-moon-stars-fill" id="themeIcon"></i>
+</button>
+
+<div class="login-wrap">
+
+    <div class="login-header">
+        <div class="login-logo">
+            <div class="login-logo-mark">EA</div>
+            <div>
+                <div class="login-logo-name">EventApp</div>
+                <div class="login-logo-sub">Administration</div>
+            </div>
+        </div>
+        <div class="login-title">Connexion administrateur</div>
+        <div class="login-sub">Accès réservé aux administrateurs</div>
+    </div>
+
+    <div class="login-card">
+
+        {% if error is defined and error %}
+        <div class="alert-error">
+            <i class="bi bi-exclamation-circle"></i>
+            {{ error.messageKey|trans(error.messageData, 'security') }}
+        </div>
+        {% endif %}
+
+        <form method="post" action="{{ path('admin_login') }}">
+
+            <div class="fg">
+                <label for="username">Nom d'utilisateur</label>
+                <input type="text"
+                       id="username"
+                       name="username"
+                       value="{{ last_username ?? '' }}"
+                       placeholder="admin"
+                       autocomplete="username"
+                       autofocus>
+            </div>
+
+            <div class="fg">
+                <label for="password">Mot de passe</label>
+                <input type="password"
+                       id="password"
+                       name="password"
+                       placeholder="••••••••"
+                       autocomplete="current-password">
+            </div>
+
+            <input type="hidden" name="_csrf_token" value="{{ csrf_token('authenticate') }}">
+
+            <button type="submit" class="btn-submit">
+                <i class="bi bi-box-arrow-in-right me-1"></i>
+                Se connecter
+            </button>
+
+        </form>
+
+        <div class="divider"></div>
+
+        <div class="login-footer">
+            <a href="{{ path('event_index') }}">
+                <i class="bi bi-arrow-left me-1"></i>Retour au site
+            </a>
+        </div>
+
+    </div>
+</div>
+
+<script>
+(function() {
+    const html = document.documentElement;
+    const btn  = document.getElementById('themeBtn');
+    const icon = document.getElementById('themeIcon');
+    let dark = localStorage.getItem('adm-theme') !== 'light';
+
+    function apply() {
+        html.setAttribute('data-theme', dark ? 'dark' : 'light');
+        icon.className = dark ? 'bi bi-moon-stars-fill' : 'bi bi-sun-fill';
+    }
+    apply();
+    btn.addEventListener('click', () => { dark = !dark; localStorage.setItem('adm-theme', dark?'dark':'light'); apply(); });
+})();
+</script>
+</body>
+</html>
