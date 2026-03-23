@@ -1,4 +1,5 @@
 <?php
+// src/Controller/AdminController.php
 
 namespace App\Controller;
 
@@ -14,6 +15,7 @@ use Symfony\Component\Security\Http\Attribute\IsGranted;
 use Symfony\Component\String\Slugger\SluggerInterface;
 
 #[Route('/admin', name: 'admin_')]
+#[IsGranted('ROLE_ADMIN')]
 class AdminController extends AbstractController
 {
     public function __construct(
@@ -22,6 +24,7 @@ class AdminController extends AbstractController
         private readonly SluggerInterface $slugger,
     ) {}
 
+    /* ─── DASHBOARD ─────────────────────────────────────────── */
     #[Route('', name: 'dashboard', methods: ['GET'])]
     public function dashboard(): Response
     {
@@ -32,19 +35,30 @@ class AdminController extends AbstractController
         ]);
     }
 
+    /* ─── EVENT INDEX — passe les 2 forms pour les modals ───── */
     #[Route('/events', name: 'event_index', methods: ['GET'])]
     public function eventIndex(): Response
     {
+        $formNew = $this->createForm(EventType::class, new Event(), [
+            'action' => $this->generateUrl('admin_event_new'),
+        ]);
+
         return $this->render('admin/event/index.html.twig', [
-            'events' => $this->eventRepository->findBy([], ['id' => 'DESC']),
+            'events'    => $this->eventRepository->findBy([], ['id' => 'DESC']),
+            'formNew'   => $formNew,
+            'formEdit'  => null,
+            'editEvent' => null,
         ]);
     }
 
+    /* ─── EVENT NEW ─────────────────────────────────────────── */
     #[Route('/events/new', name: 'event_new', methods: ['GET', 'POST'])]
     public function eventNew(Request $request): Response
     {
         $event = new Event();
-        $form  = $this->createForm(EventType::class, $event);
+        $form  = $this->createForm(EventType::class, $event, [
+            'action' => $this->generateUrl('admin_event_new'),
+        ]);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
@@ -54,15 +68,27 @@ class AdminController extends AbstractController
             return $this->redirectToRoute('admin_event_index');
         }
 
-        return $this->render('admin/event/new.html.twig', [
-            'form' => $form,
+        // Erreur → réafficher index avec modal new ouvert
+        $formNew = $this->createForm(EventType::class, new Event(), [
+            'action' => $this->generateUrl('admin_event_new'),
+        ]);
+
+        return $this->render('admin/event/index.html.twig', [
+            'events'      => $this->eventRepository->findBy([], ['id' => 'DESC']),
+            'formNew'     => $form,
+            'formNewOpen' => true,
+            'formEdit'    => null,
+            'editEvent'   => null,
         ]);
     }
 
+    /* ─── EVENT EDIT ─────────────────────────────────────────── */
     #[Route('/events/{id}/edit', name: 'event_edit', methods: ['GET', 'POST'], requirements: ['id' => '\d+'])]
     public function eventEdit(Request $request, Event $event): Response
     {
-        $form = $this->createForm(EventType::class, $event);
+        $form = $this->createForm(EventType::class, $event, [
+            'action' => $this->generateUrl('admin_event_edit', ['id' => $event->getId()]),
+        ]);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
@@ -72,24 +98,31 @@ class AdminController extends AbstractController
             return $this->redirectToRoute('admin_event_index');
         }
 
-        return $this->render('admin/event/edit.html.twig', [
-            'form'  => $form,
-            'event' => $event,
+        $formNew = $this->createForm(EventType::class, new Event(), [
+            'action' => $this->generateUrl('admin_event_new'),
+        ]);
+
+        return $this->render('admin/event/index.html.twig', [
+            'events'       => $this->eventRepository->findBy([], ['id' => 'DESC']),
+            'formNew'      => $formNew,
+            'formEdit'     => $form,
+            'formEditOpen' => true,
+            'editEvent'    => $event,
         ]);
     }
 
+    /* ─── EVENT DELETE ──────────────────────────────────────── */
     #[Route('/events/{id}/delete', name: 'event_delete', methods: ['POST'], requirements: ['id' => '\d+'])]
     public function eventDelete(Request $request, Event $event): Response
     {
         if ($this->isCsrfTokenValid('delete_event_' . $event->getId(), $request->request->get('_token'))) {
             $this->eventRepository->remove($event, true);
-            $this->addFlash('success', 'Événement supprimé.');
+            $this->addFlash('success', 'Événement supprimé avec succès.');
         }
-
         return $this->redirectToRoute('admin_event_index');
     }
 
-  
+    /* ─── RESERVATIONS ──────────────────────────────────────── */
     #[Route('/events/{id}/reservations', name: 'event_reservations', methods: ['GET'], requirements: ['id' => '\d+'])]
     public function eventReservations(Event $event): Response
     {
@@ -102,8 +135,8 @@ class AdminController extends AbstractController
         ]);
     }
 
-
-    private function handleImageUpload($form, Event $event): void
+    /* ─── UPLOAD IMAGE ──────────────────────────────────────── */
+    private function handleImageUpload(mixed $form, Event $event): void
     {
         $imageFile = $form->get('imageFile')->getData();
         if (!$imageFile) return;

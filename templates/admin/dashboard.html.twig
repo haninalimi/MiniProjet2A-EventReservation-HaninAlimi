@@ -7,54 +7,55 @@
 <div class="adm-page-header">
     <div>
         <div class="adm-page-title">Tableau de bord</div>
-        <div class="adm-page-desc">Bienvenue, administrateur · {{ "now"|date('d/m/Y H:i') }}</div>
+        <div class="adm-page-desc">{{ "now"|date('d/m/Y') }} · EventApp Production</div>
     </div>
-    <a href="{{ path('admin_event_new') }}" class="adm-btn adm-btn-primary">
-        <i class="bi bi-plus"></i> Nouvel événement
+    <a href="{{ path('admin_event_index') }}" class="adm-btn adm-btn-primary">
+        <i class="bi bi-plus-lg"></i> Nouvel événement
     </a>
 </div>
 
 <div class="adm-stats">
-    <div class="adm-stat">
-        <div class="adm-stat-icon" style="background:rgba(197,165,114,0.1);">
-            <i class="bi bi-calendar3" style="color:var(--adm-accent);"></i>
+
+    <div class="adm-stat" style="--stat-accent:var(--c-amber)">
+        <div class="adm-stat-header">
+            <div class="adm-stat-icon"><i class="bi bi-calendar3"></i></div>
+            <span class="adm-stat-trend">TOTAL</span>
         </div>
-        <div>
-            <div class="adm-stat-num" style="color:var(--adm-accent);">{{ totalEvents }}</div>
-            <div class="adm-stat-lbl">Événements</div>
-            <div class="adm-stat-trend">total</div>
-        </div>
+        <div class="adm-stat-num">{{ totalEvents }}</div>
+        <div class="adm-stat-lbl">Événements</div>
+        <div class="adm-stat-sub">dans le catalogue</div>
     </div>
-    <div class="adm-stat">
-        <div class="adm-stat-icon" style="background:rgba(56,139,253,0.1);">
-            <i class="bi bi-people" style="color:var(--adm-blue);"></i>
+
+    <div class="adm-stat" style="--stat-accent:var(--c-blue)">
+        <div class="adm-stat-header">
+            <div class="adm-stat-icon"><i class="bi bi-people-fill"></i></div>
+            <span class="adm-stat-trend">ALL TIME</span>
         </div>
-        <div>
-            <div class="adm-stat-num" style="color:var(--adm-blue);">{{ totalReservations }}</div>
-            <div class="adm-stat-lbl">Réservations</div>
-            <div class="adm-stat-trend">total</div>
-        </div>
+        <div class="adm-stat-num">{{ totalReservations }}</div>
+        <div class="adm-stat-lbl">Réservations</div>
+        <div class="adm-stat-sub">confirmées</div>
     </div>
-    <div class="adm-stat">
-        <div class="adm-stat-icon" style="background:rgba(63,185,80,0.1);">
-            <i class="bi bi-shield-check" style="color:var(--adm-green);"></i>
+
+    <div class="adm-stat" style="--stat-accent:var(--c-green)">
+        <div class="adm-stat-header">
+            <div class="adm-stat-icon"><i class="bi bi-shield-fill-check"></i></div>
+            <span class="adm-stat-trend">ACTIF</span>
         </div>
-        <div>
-            <div class="adm-stat-num" style="color:var(--adm-green);">JWT</div>
-            <div class="adm-stat-lbl">Sécurité</div>
-            <div class="adm-stat-trend">+ Passkeys</div>
-        </div>
+        <div class="adm-stat-num" style="font-size:1.4rem;">JWT</div>
+        <div class="adm-stat-lbl">Sécurité</div>
+        <div class="adm-stat-sub">+ Passkeys FIDO2</div>
     </div>
-    <div class="adm-stat">
-        <div class="adm-stat-icon" style="background:rgba(210,153,34,0.1);">
-            <i class="bi bi-activity" style="color:var(--adm-yellow);"></i>
+
+    <div class="adm-stat" style="--stat-accent:var(--c-purple)">
+        <div class="adm-stat-header">
+            <div class="adm-stat-icon"><i class="bi bi-activity"></i></div>
+            <span class="adm-stat-trend">LIVE</span>
         </div>
-        <div>
-            <div class="adm-stat-num" style="color:var(--adm-yellow);">En ligne</div>
-            <div class="adm-stat-lbl">Statut</div>
-            <div class="adm-stat-trend">Symfony 7.4</div>
-        </div>
+        <div class="adm-stat-num" style="font-size:1.1rem;">7.4.7</div>
+        <div class="adm-stat-lbl">Symfony</div>
+        <div class="adm-stat-sub">PHP 8.3 · PostgreSQL 15</div>
     </div>
+
 </div>
 
 <div class="adm-card">
@@ -79,27 +80,44 @@
             </tr>
         </thead>
         <tbody>
-            {% for event in latestEvents %}
+        {% for event in latestEvents %}
             <tr>
-                <td><span style="font-family:'JetBrains Mono',monospace;color:var(--adm-text3);">#{{ event.id }}</span></td>
-                <td class="adm-td-primary">{{ event.title }}</td>
-                <td>{{ event.date|date('d/m/Y') }}</td>
+                <td class="adm-td-mono u-muted">#{{ event.id }}</td>
+                <td class="adm-td-main">{{ event.title }}</td>
+                <td class="adm-td-mono">{{ event.date|date('d/m/Y') }}</td>
                 <td>{{ event.location }}</td>
-                <td><span class="adm-badge adm-badge-gold">{{ event.seats }}</span></td>
                 <td>
-                    <div style="display:flex;gap:.35rem;">
-                        <a href="{{ path('admin_event_edit', {id: event.id}) }}" class="adm-btn adm-btn-secondary" style="padding:.3rem .55rem;">
+                    <span class="adm-badge adm-badge-amber">{{ event.seats }}</span>
+                </td>
+                <td>
+                    <div style="display:flex;gap:.3rem;">
+                        <a href="{{ path('admin_event_edit', {id: event.id}) }}"
+                           class="adm-btn adm-btn-secondary"
+                           style="padding:.28rem .5rem;" title="Modifier">
                             <i class="bi bi-pencil"></i>
                         </a>
-                        <a href="{{ path('admin_event_reservations', {id: event.id}) }}" class="adm-btn adm-btn-ghost" style="padding:.3rem .55rem;">
+                        <a href="{{ path('admin_event_reservations', {id: event.id}) }}"
+                           class="adm-btn adm-btn-ghost"
+                           style="padding:.28rem .5rem;" title="Réservations">
                             <i class="bi bi-people"></i>
                         </a>
                     </div>
                 </td>
             </tr>
-            {% else %}
-            <tr><td colspan="6" class="adm-empty"><i class="bi bi-calendar-x"></i><p>Aucun événement</p></td></tr>
-            {% endfor %}
+        {% else %}
+            <tr>
+                <td colspan="6">
+                    <div class="adm-empty">
+                        <i class="bi bi-calendar-x adm-empty-icon"></i>
+                        <div class="adm-empty-title">Aucun événement</div>
+                        <div class="adm-empty-desc">Le catalogue est vide</div>
+                        <a href="{{ path('admin_event_index') }}" class="adm-btn adm-btn-primary">
+                            <i class="bi bi-plus-lg"></i> Créer le premier
+                        </a>
+                    </div>
+                </td>
+            </tr>
+        {% endfor %}
         </tbody>
     </table>
 </div>

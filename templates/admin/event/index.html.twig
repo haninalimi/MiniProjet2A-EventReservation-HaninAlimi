@@ -4,26 +4,43 @@
 
 {% block content %}
 
+{% if formNewOpen is defined and formNewOpen %}
+    <script>document.addEventListener('DOMContentLoaded',()=>Modal.open('modal-new'));</script>
+{% endif %}
+{% if formEditOpen is defined and formEditOpen %}
+    <script>document.addEventListener('DOMContentLoaded',()=>Modal.open('modal-edit'));</script>
+{% endif %}
+
 <div class="adm-page-header">
     <div>
         <div class="adm-page-title">Gestion des événements</div>
-        <div class="adm-page-desc">{{ events|length }} événement(s) au total</div>
+        <div class="adm-page-desc">{{ events|length }} événement(s) · mise à jour {{ "now"|date('H:i') }}</div>
     </div>
-    <a href="{{ path('admin_event_new') }}" class="adm-btn adm-btn-primary">
-        <i class="bi bi-plus"></i> Nouvel événement
-    </a>
+    <button class="adm-btn adm-btn-primary" onclick="Modal.open('modal-new')">
+        <i class="bi bi-plus-lg"></i> Nouvel événement
+    </button>
 </div>
 
 <div class="adm-card">
     <div class="adm-card-header">
         <div class="adm-card-title">
-            <i class="bi bi-table"></i> Liste des événements
+            <i class="bi bi-table"></i> Catalogue
         </div>
-        <div style="font-family:'JetBrains Mono',monospace;font-size:.65rem;color:var(--adm-text3);">
-            {{ events|length }} résultat(s)
+        <div style="display:flex;align-items:center;gap:.75rem;">
+            <div style="position:relative;">
+                <i class="bi bi-search"
+                   style="position:absolute;left:.65rem;top:50%;transform:translateY(-50%);color:var(--c-text3);font-size:.75rem;pointer-events:none;"></i>
+                <input type="text"
+                       id="evtSearch"
+                       class="adm-input"
+                       placeholder="Rechercher..."
+                       style="padding-left:2rem;width:200px;height:30px;font-size:.75rem;">
+            </div>
+            <span class="adm-card-meta" id="evtTable-count">{{ events|length }} résultat(s)</span>
         </div>
     </div>
-    <table class="adm-table">
+
+    <table class="adm-table" id="evtTable">
         <thead>
             <tr>
                 <th>ID</th>
@@ -32,58 +49,289 @@
                 <th>Lieu</th>
                 <th>Places</th>
                 <th>Image</th>
-                <th>Réservations</th>
+                <th>Résa.</th>
                 <th>Actions</th>
             </tr>
         </thead>
         <tbody>
-            {% for event in events %}
+        {% for event in events %}
             <tr>
-                <td><span style="font-family:'JetBrains Mono',monospace;color:var(--adm-text3);">#{{ event.id }}</span></td>
-                <td class="adm-td-primary">{{ event.title }}</td>
-                <td style="font-family:'JetBrains Mono',monospace;font-size:.72rem;">{{ event.date|date('d/m/Y H:i') }}</td>
-                <td>{{ event.location }}</td>
-                <td><span class="adm-badge adm-badge-gold">{{ event.seats }}</span></td>
+                <td class="adm-td-mono u-muted">#{{ event.id }}</td>
+                <td class="adm-td-main">{{ event.title }}</td>
+                <td class="adm-td-mono">
+                    {{ event.date|date('d/m/Y') }}<br>
+                    <span class="u-muted" style="font-size:.58rem;">{{ event.date|date('H:i') }}</span>
+                </td>
+                <td style="font-size:.75rem;">{{ event.location }}</td>
+                <td>
+                    <span class="adm-badge adm-badge-amber">{{ event.seats }}</span>
+                </td>
                 <td>
                     {% if event.image %}
-                        <span class="adm-badge adm-badge-green"><i class="bi bi-check"></i> Oui</span>
+                        <span class="adm-badge adm-badge-green"><i class="bi bi-check-lg"></i> Oui</span>
                     {% else %}
-                        <span class="adm-badge" style="color:var(--adm-text3);border-color:var(--adm-border);">Non</span>
+                        <span class="adm-badge adm-badge-muted">—</span>
                     {% endif %}
                 </td>
                 <td>
                     <a href="{{ path('admin_event_reservations', {id: event.id}) }}"
-                       class="adm-badge adm-badge-blue" style="text-decoration:none;cursor:pointer;">
+                       class="adm-badge adm-badge-blue"
+                       style="text-decoration:none;cursor:pointer;">
                         <i class="bi bi-people"></i> Voir
                     </a>
                 </td>
                 <td>
-                    <div style="display:flex;gap:.35rem;">
+                    <div style="display:flex;gap:.3rem;align-items:center;">
                         <a href="{{ path('admin_event_edit', {id: event.id}) }}"
-                           class="adm-btn adm-btn-secondary" style="padding:.3rem .55rem;" title="Modifier">
+                           class="adm-btn adm-btn-secondary"
+                           style="padding:.28rem .5rem;" title="Modifier">
                             <i class="bi bi-pencil"></i>
                         </a>
-                        <form method="post" action="{{ path('admin_event_delete', {id: event.id}) }}"
+                        <form method="post"
+                              action="{{ path('admin_event_delete', {id: event.id}) }}"
                               style="display:inline;"
-                              onsubmit="return confirm('Supprimer « {{ event.title }} » ?')">
-                            <input type="hidden" name="_token" value="{{ csrf_token('delete_event_' ~ event.id) }}">
-                            <button type="submit" class="adm-btn adm-btn-danger" style="padding:.3rem .55rem;" title="Supprimer">
+                              data-confirm="Supprimer définitivement « {{ event.title|e('html_attr') }} » ?">
+                            <input type="hidden" name="_token"
+                                   value="{{ csrf_token('delete_event_' ~ event.id) }}">
+                            <button type="submit"
+                                    class="adm-btn adm-btn-danger"
+                                    style="padding:.28rem .5rem;" title="Supprimer">
                                 <i class="bi bi-trash"></i>
                             </button>
                         </form>
                     </div>
                 </td>
             </tr>
-            {% else %}
+        {% else %}
             <tr>
-                <td colspan="8" class="adm-empty">
-                    <i class="bi bi-calendar-x"></i>
-                    <p>Aucun événement. <a href="{{ path('admin_event_new') }}" style="color:var(--adm-accent);">Créer le premier</a></p>
+                <td colspan="8">
+                    <div class="adm-empty">
+                        <i class="bi bi-calendar-x adm-empty-icon"></i>
+                        <div class="adm-empty-title">Catalogue vide</div>
+                        <div class="adm-empty-desc">Aucun événement enregistré</div>
+                        <button class="adm-btn adm-btn-primary" onclick="Modal.open('modal-new')">
+                            <i class="bi bi-plus-lg"></i> Créer le premier événement
+                        </button>
+                    </div>
                 </td>
             </tr>
-            {% endfor %}
+        {% endfor %}
         </tbody>
     </table>
 </div>
+
+
+
+<div class="adm-modal-backdrop"
+     id="modal-new"
+     onclick="Modal.onBackdrop(event,'modal-new')"
+     role="dialog" aria-modal="true" aria-labelledby="modal-new-title">
+    <div class="adm-modal">
+
+        <div class="adm-modal-head">
+            <div class="adm-modal-title" id="modal-new-title">
+                <i class="bi bi-plus-circle-fill"></i>
+                Nouvel événement
+            </div>
+            <button class="adm-modal-close" onclick="Modal.close('modal-new')" aria-label="Fermer">
+                <i class="bi bi-x-lg"></i>
+            </button>
+        </div>
+
+        <div class="adm-modal-body">
+            {{ form_start(formNew, {
+                'attr': {
+                    'id': 'form-new',
+                    'novalidate': 'novalidate',
+                    'enctype': 'multipart/form-data'
+                }
+            }) }}
+
+            <div class="adm-form-row">
+
+                <div class="adm-form-group full">
+                    <label class="adm-label">{{ form_label(formNew.title) }} *</label>
+                    {{ form_widget(formNew.title, {'attr': {
+                        'class': 'adm-input',
+                        'placeholder': "Ex : Conférence Tech & Innovation 2026"
+                    }}) }}
+                    {{ form_errors(formNew.title) }}
+                </div>
+
+                <div class="adm-form-group full">
+                    <label class="adm-label">{{ form_label(formNew.description) }}</label>
+                    {{ form_widget(formNew.description, {'attr': {
+                        'class': 'adm-textarea adm-input',
+                        'rows': 3,
+                        'placeholder': "Description de l'événement..."
+                    }}) }}
+                    {{ form_errors(formNew.description) }}
+                </div>
+
+                <div class="adm-form-group">
+                    <label class="adm-label">{{ form_label(formNew.date) }} *</label>
+                    {{ form_widget(formNew.date, {'attr': {'class': 'adm-input'}}) }}
+                    {{ form_errors(formNew.date) }}
+                </div>
+
+                <div class="adm-form-group">
+                    <label class="adm-label">{{ form_label(formNew.seats) }} *</label>
+                    {{ form_widget(formNew.seats, {'attr': {
+                        'class': 'adm-input',
+                        'min': '1', 'placeholder': '50'
+                    }}) }}
+                    {{ form_errors(formNew.seats) }}
+                </div>
+
+                <div class="adm-form-group full">
+                    <label class="adm-label">{{ form_label(formNew.location) }} *</label>
+                    {{ form_widget(formNew.location, {'attr': {
+                        'class': 'adm-input',
+                        'placeholder': "Ex : Salle A, ISSAT Sousse"
+                    }}) }}
+                    {{ form_errors(formNew.location) }}
+                </div>
+
+                {% if formNew.imageFile is defined %}
+                <div class="adm-form-group full">
+                    <label class="adm-label">
+                        Image
+                        <span class="opt">(optionnelle · JPG, PNG, WEBP · max 2 Mo)</span>
+                    </label>
+                    {{ form_widget(formNew.imageFile, {'attr': {
+                        'class': 'adm-input',
+                        'style': 'padding:.38rem .65rem;'
+                    }}) }}
+                    {{ form_errors(formNew.imageFile) }}
+                </div>
+                {% endif %}
+
+            </div>
+
+            {{ form_end(formNew, {'render_rest': false}) }}
+        </div>
+
+        <div class="adm-modal-foot">
+            <button type="button" class="adm-btn adm-btn-ghost"
+                    onclick="Modal.close('modal-new')">
+                Annuler
+            </button>
+            <button type="button" class="adm-btn adm-btn-primary"
+                    onclick="submitWithValidation('form-new')">
+                <i class="bi bi-check-lg"></i> Créer l'événement
+            </button>
+        </div>
+
+    </div>
+</div>
+
+
+
+{% if editEvent is not null and formEdit is not null %}
+<div class="adm-modal-backdrop"
+     id="modal-edit"
+     onclick="Modal.onBackdrop(event,'modal-edit')"
+     role="dialog" aria-modal="true" aria-labelledby="modal-edit-title">
+    <div class="adm-modal">
+
+        <div class="adm-modal-head">
+            <div class="adm-modal-title" id="modal-edit-title">
+                <i class="bi bi-pencil-square"></i>
+                {{ editEvent.title|slice(0,40) }}{% if editEvent.title|length > 40 %}…{% endif %}
+            </div>
+            <a href="{{ path('admin_event_index') }}"
+               class="adm-modal-close" aria-label="Fermer">
+                <i class="bi bi-x-lg"></i>
+            </a>
+        </div>
+
+        <div class="adm-modal-body">
+
+            {% if editEvent.image %}
+            <div class="adm-img-preview">
+                <img src="{{ asset('uploads/events/' ~ editEvent.image) }}"
+                     alt="Image actuelle de {{ editEvent.title }}">
+                <div>
+                    <div class="adm-img-preview-lbl">Image actuelle</div>
+                    <div class="adm-img-preview-file">{{ editEvent.image }}</div>
+                </div>
+            </div>
+            {% endif %}
+
+            {{ form_start(formEdit, {
+                'attr': {
+                    'id': 'form-edit',
+                    'novalidate': 'novalidate',
+                    'enctype': 'multipart/form-data'
+                }
+            }) }}
+
+            <div class="adm-form-row">
+
+                <div class="adm-form-group full">
+                    <label class="adm-label">{{ form_label(formEdit.title) }} *</label>
+                    {{ form_widget(formEdit.title, {'attr': {'class': 'adm-input'}}) }}
+                    {{ form_errors(formEdit.title) }}
+                </div>
+
+                <div class="adm-form-group full">
+                    <label class="adm-label">{{ form_label(formEdit.description) }}</label>
+                    {{ form_widget(formEdit.description, {'attr': {
+                        'class': 'adm-textarea adm-input', 'rows': 3
+                    }}) }}
+                    {{ form_errors(formEdit.description) }}
+                </div>
+
+                <div class="adm-form-group">
+                    <label class="adm-label">{{ form_label(formEdit.date) }} *</label>
+                    {{ form_widget(formEdit.date, {'attr': {'class': 'adm-input'}}) }}
+                    {{ form_errors(formEdit.date) }}
+                </div>
+
+                <div class="adm-form-group">
+                    <label class="adm-label">{{ form_label(formEdit.seats) }} *</label>
+                    {{ form_widget(formEdit.seats, {'attr': {'class': 'adm-input', 'min': '1'}}) }}
+                    {{ form_errors(formEdit.seats) }}
+                </div>
+
+                <div class="adm-form-group full">
+                    <label class="adm-label">{{ form_label(formEdit.location) }} *</label>
+                    {{ form_widget(formEdit.location, {'attr': {'class': 'adm-input'}}) }}
+                    {{ form_errors(formEdit.location) }}
+                </div>
+
+                {% if formEdit.imageFile is defined %}
+                <div class="adm-form-group full">
+                    <label class="adm-label">
+                        Nouvelle image
+                        <span class="opt">(laisser vide pour conserver l'actuelle)</span>
+                    </label>
+                    {{ form_widget(formEdit.imageFile, {'attr': {
+                        'class': 'adm-input',
+                        'style': 'padding:.38rem .65rem;'
+                    }}) }}
+                    {{ form_errors(formEdit.imageFile) }}
+                </div>
+                {% endif %}
+
+            </div>
+
+            {{ form_end(formEdit, {'render_rest': false}) }}
+        </div>
+
+        <div class="adm-modal-foot">
+            <a href="{{ path('admin_event_index') }}"
+               class="adm-btn adm-btn-ghost">
+                Annuler
+            </a>
+            <button type="button" class="adm-btn adm-btn-primary"
+                    onclick="submitWithValidation('form-edit')">
+                <i class="bi bi-check-lg"></i> Enregistrer
+            </button>
+        </div>
+
+    </div>
+</div>
+{% endif %}
 
 {% endblock %}
