@@ -290,7 +290,7 @@ Event Controller
 ## Auteur
 
 **Hanin Alimi**
-- Classe : FIA3-GL
+- Classe : FIA4-GL
 - Institut : ISSAT Sousse
 - Année universitaire : 2025–2026
 - Dépôt : [github.com/haninalimi/MiniProjet2A-EventReservation-HaninAlimi](https://github.com/haninalimi/MiniProjet2A-EventReservation-HaninAlimi)
