@@ -1,396 +1,14 @@
 {% extends 'base.html.twig' %}
+
 {% block title %}Événements — EventApp{% endblock %}
 
 {% block stylesheets %}
-<style>
-/* ════════════════════════════════════════════
-   PAGE ÉVÉNEMENTS
-════════════════════════════════════════════ */
-
-/* Hero */
-.events-page-hero {
-    padding: 5rem 6% 4rem;
-    position: relative;
-    overflow: hidden;
-    background: var(--bg);
-}
-.events-page-hero::before {
-    content: '';
-    position: absolute;
-    top: -30%; left: -10%;
-    width: 70%; height: 200%;
-    background: radial-gradient(circle, rgba(197,165,114,0.03) 0%, transparent 70%);
-    pointer-events: none;
-}
-
-.page-hero-eyebrow {
-    font-family: 'Space Mono', monospace;
-    font-size: .55rem;
-    letter-spacing: .3em;
-    text-transform: uppercase;
-    color: var(--or);
-    display: flex;
-    align-items: center;
-    gap: .75rem;
-    margin-bottom: 1.25rem;
-}
-.page-hero-eyebrow::before { content:'';width:22px;height:1px;background:var(--or);flex-shrink:0; }
-
-.page-hero-h1 {
-    font-family: 'Cormorant Garamond', serif;
-    font-size: clamp(2.5rem, 5vw, 4rem);
-    font-weight: 300;
-    line-height: 1.05;
-    letter-spacing: -.01em;
-    margin-bottom: 1rem;
-    color: var(--text);
-}
-.page-hero-h1 em { font-style: italic; color: var(--or); }
-
-.page-hero-desc {
-    font-size: .9rem;
-    font-weight: 300;
-    color: var(--text2);
-    max-width: 500px;
-    line-height: 1.8;
-    margin-bottom: 2rem;
-}
-
-/* Stats bar */
-.events-stats-bar {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    max-width: 500px;
-    border: 1px solid var(--border);
-    border-radius: 3px;
-    overflow: hidden;
-    background: var(--glass);
-    backdrop-filter: blur(20px);
-}
-.esb-item {
-    padding: 1rem 1.25rem;
-    text-align: center;
-    border-right: 1px solid var(--border);
-}
-.esb-item:last-child { border-right: none; }
-.esb-num {
-    font-family: 'Cormorant Garamond', serif;
-    font-size: 1.6rem;
-    font-weight: 300;
-    color: var(--or);
-    line-height: 1;
-}
-.esb-lbl {
-    font-family: 'Space Mono', monospace;
-    font-size: .44rem;
-    letter-spacing: .14em;
-    text-transform: uppercase;
-    color: var(--text3);
-    margin-top: .2rem;
-}
-
-/* Search & filters */
-.events-filters {
-    padding: 2rem 6%;
-    background: var(--bg2);
-    border-top: 1px solid var(--border);
-    border-bottom: 1px solid var(--border);
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 1.5rem;
-    flex-wrap: wrap;
-    transition: background .4s;
-}
-
-.search-lux {
-    position: relative;
-    flex: 1;
-    max-width: 360px;
-}
-.search-lux i {
-    position: absolute;
-    left: 1rem; top: 50%;
-    transform: translateY(-50%);
-    color: var(--or);
-    font-size: .85rem;
-}
-.search-input-lux {
-    width: 100%;
-    padding: .7rem 1rem .7rem 2.75rem;
-    background: var(--bg3);
-    border: 1px solid var(--border);
-    border-radius: 2px;
-    color: var(--text);
-    font-family: 'Outfit', sans-serif;
-    font-size: .82rem;
-    font-weight: 300;
-    outline: none;
-    transition: all .25s;
-}
-.search-input-lux:focus {
-    border-color: rgba(197,165,114,0.5);
-    background: rgba(197,165,114,0.03);
-}
-.search-input-lux::placeholder { color: var(--text3); }
-
-.filter-pills {
-    display: flex;
-    gap: .5rem;
-    flex-wrap: wrap;
-}
-.filter-pill {
-    font-family: 'Space Mono', monospace;
-    font-size: .5rem;
-    letter-spacing: .12em;
-    text-transform: uppercase;
-    padding: .45rem .9rem;
-    border: 1px solid var(--border);
-    border-radius: 2px;
-    color: var(--text2);
-    background: transparent;
-    cursor: pointer;
-    transition: all .25s;
-    display: flex;
-    align-items: center;
-    gap: .4rem;
-}
-.filter-pill:hover, .filter-pill.active {
-    border-color: var(--or);
-    color: var(--or);
-    background: rgba(197,165,114,0.06);
-}
-
-/* Events grid */
-.events-catalog {
-    padding: 3rem 6% 6rem;
-    background: var(--bg);
-    transition: background .4s;
-}
-
-.catalog-header {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    margin-bottom: 2.5rem;
-    flex-wrap: wrap;
-    gap: 1rem;
-}
-.catalog-count {
-    font-family: 'Space Mono', monospace;
-    font-size: .56rem;
-    letter-spacing: .15em;
-    text-transform: uppercase;
-    color: var(--text3);
-}
-.catalog-count span { color: var(--or); }
-
-.catalog-grid {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 1.5rem;
-}
-
-/* Event card */
-.ev-card {
-    background: var(--bg3);
-    border: 1px solid var(--border);
-    border-radius: 3px;
-    overflow: hidden;
-    display: flex;
-    flex-direction: column;
-    transition: all .35s;
-    position: relative;
-}
-.ev-card::before {
-    content: '';
-    position: absolute;
-    top: 0; left: 0; right: 0;
-    height: 2px;
-    background: linear-gradient(90deg, var(--or), var(--or3));
-    transform: scaleX(0);
-    transition: transform .4s;
-    transform-origin: left;
-    z-index: 2;
-}
-.ev-card:hover {
-    border-color: rgba(197,165,114,0.35);
-    transform: translateY(-6px);
-    box-shadow: 0 20px 50px rgba(0,0,0,0.5);
-}
-.ev-card:hover::before { transform: scaleX(1); }
-
-.ev-img {
-    height: 200px;
-    position: relative;
-    overflow: hidden;
-}
-.ev-img img {
-    width: 100%; height: 100%;
-    object-fit: cover;
-    transition: transform .4s;
-}
-.ev-card:hover .ev-img img { transform: scale(1.05); }
-.ev-img-placeholder {
-    width: 100%; height: 100%;
-    background: linear-gradient(135deg, #1a1408, #2a1f10);
-    display: flex; align-items: center; justify-content: center;
-    font-family: 'Cormorant Garamond', serif;
-    font-size: 3rem;
-    color: rgba(197,165,114,0.1);
-}
-.ev-badge {
-    position: absolute;
-    top: .75rem; right: .75rem;
-    background: rgba(8,8,8,0.88);
-    border: 1px solid rgba(197,165,114,0.35);
-    color: var(--or);
-    padding: .22rem .65rem;
-    font-family: 'Space Mono', monospace;
-    font-size: .5rem;
-    letter-spacing: .1em;
-    border-radius: 2px;
-    z-index: 1;
-}
-
-.ev-body {
-    padding: 1.25rem;
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-}
-.ev-tag {
-    font-family: 'Space Mono', monospace;
-    font-size: .5rem;
-    letter-spacing: .15em;
-    text-transform: uppercase;
-    color: var(--or);
-    margin-bottom: .4rem;
-}
-.ev-title {
-    font-family: 'Cormorant Garamond', serif;
-    font-size: 1.15rem;
-    font-weight: 600;
-    color: var(--text);
-    line-height: 1.25;
-    margin-bottom: .6rem;
-    transition: color .25s;
-}
-.ev-card:hover .ev-title { color: var(--or); }
-.ev-desc {
-    font-size: .78rem;
-    font-weight: 300;
-    color: var(--text2);
-    line-height: 1.7;
-    flex: 1;
-    margin-bottom: 1rem;
-}
-
-.ev-meta {
-    padding: .85rem 0;
-    border-top: 1px solid var(--border);
-    border-bottom: 1px solid var(--border);
-    margin-bottom: 1rem;
-    display: flex;
-    flex-direction: column;
-    gap: .4rem;
-}
-.ev-meta-row {
-    display: flex;
-    align-items: center;
-    gap: .6rem;
-    font-size: .76rem;
-    font-weight: 300;
-    color: var(--text2);
-}
-.ev-meta-row i { color: var(--or); font-size: .8rem; width: 14px; flex-shrink: 0; }
-
-.ev-seats {
-    display: flex;
-    align-items: center;
-    gap: .75rem;
-    margin-bottom: 1rem;
-}
-.ev-seats-bar {
-    flex: 1;
-    height: 2px;
-    background: rgba(197,165,114,0.1);
-    border-radius: 1px;
-    overflow: hidden;
-}
-.ev-seats-fill {
-    height: 100%;
-    background: linear-gradient(90deg, var(--or), var(--or3));
-    border-radius: 1px;
-}
-.ev-seats-count {
-    font-family: 'Space Mono', monospace;
-    font-size: .5rem;
-    letter-spacing: .1em;
-    color: var(--or);
-    white-space: nowrap;
-}
-
-.ev-btn {
-    background: transparent;
-    border: 1px solid rgba(197,165,114,0.35);
-    color: var(--or) !important;
-    padding: .65rem 1rem;
-    font-family: 'Space Mono', monospace;
-    font-size: .52rem;
-    letter-spacing: .12em;
-    text-transform: uppercase;
-    cursor: pointer;
-    border-radius: 2px;
-    transition: all .25s;
-    text-decoration: none !important;
-    display: block;
-    text-align: center;
-    margin-top: auto;
-}
-.ev-btn:hover {
-    background: var(--or);
-    color: var(--bg) !important;
-    border-color: var(--or);
-}
-
-/* Empty state */
-.empty-state-lux {
-    text-align: center;
-    padding: 6rem 0;
-    grid-column: 1/-1;
-}
-.empty-icon {
-    font-family: 'Cormorant Garamond', serif;
-    font-size: 4rem;
-    color: rgba(197,165,114,0.15);
-    margin-bottom: 1.5rem;
-}
-.empty-title {
-    font-family: 'Cormorant Garamond', serif;
-    font-size: 2rem;
-    font-weight: 300;
-    color: var(--text);
-    margin-bottom: .75rem;
-}
-.empty-desc {
-    font-size: .82rem;
-    font-weight: 300;
-    color: var(--text2);
-    max-width: 400px;
-    margin: 0 auto 2rem;
-    line-height: 1.8;
-}
-
-/* Responsive */
-@media (max-width: 1000px) { .catalog-grid { grid-template-columns: 1fr 1fr; } }
-@media (max-width: 640px) { .catalog-grid { grid-template-columns: 1fr; } .events-filters { flex-direction: column; align-items: stretch; } .search-lux { max-width: 100%; } }
-</style>
+    {{ parent() }}
+    <link rel="stylesheet" href="{{ asset('css/events.css') }}">
 {% endblock %}
 
 {% block body %}
 
-{# ════════ HERO ════════ #}
 <section class="book-section events-page-hero" data-sec="0">
     <div class="page-hero-eyebrow">Catalogue complet</div>
     <h1 class="page-hero-h1">
@@ -417,7 +35,6 @@
     </div>
 </section>
 
-{# ── SÉPARATEUR ── #}
 <div class="page-sep" style="background:var(--bg2);">
     <div class="sep-line-full"></div>
     <div class="sep-center" style="background:var(--bg2);">
@@ -431,7 +48,6 @@
     </div>
 </div>
 
-{# ════════ FILTERS ════════ #}
 <div class="events-filters">
     <div class="search-lux">
         <i class="bi bi-search"></i>
@@ -452,7 +68,6 @@
     </div>
 </div>
 
-{# ── SÉPARATEUR ── #}
 <div class="page-sep">
     <div class="sep-line-full"></div>
     <div class="sep-center">
@@ -466,7 +81,6 @@
     </div>
 </div>
 
-{# ════════ CATALOG ════════ #}
 <section class="events-catalog" data-sec="1">
     <div class="catalog-header">
         <div class="catalog-count">
@@ -536,36 +150,6 @@
 {% endblock %}
 
 {% block javascripts %}
-<script>
-function filterEvents() {
-    const q = document.getElementById('evSearch').value.toLowerCase();
-    const items = document.querySelectorAll('.event-item');
-    let visible = 0;
-    items.forEach(item => {
-        const title = item.dataset.title || '';
-        const match = title.includes(q);
-        item.style.display = match ? '' : 'none';
-        if (match) visible++;
-    });
-    const vc = document.getElementById('visibleCount');
-    if (vc) vc.textContent = visible;
-}
-
-function applyFilter(type) {
-    document.querySelectorAll('.filter-pill').forEach(p => p.classList.remove('active'));
-    document.getElementById('f-' + type)?.classList.add('active');
-    const today = new Date().toISOString().split('T')[0];
-    const items = document.querySelectorAll('.event-item');
-    let visible = 0;
-    items.forEach(item => {
-        let show = true;
-        if (type === 'upcoming') show = item.dataset.date >= today;
-        if (type === 'available') show = parseInt(item.dataset.seats) > 0;
-        item.style.display = show ? '' : 'none';
-        if (show) visible++;
-    });
-    const vc = document.getElementById('visibleCount');
-    if (vc) vc.textContent = visible;
-}
-</script>
+    {{ parent() }}
+    <script src="{{ asset('js/events.js') }}"></script>
 {% endblock %}

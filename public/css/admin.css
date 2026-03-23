@@ -774,7 +774,6 @@ body::before {
     box-shadow: var(--shadow-lg);
     position: relative;
 }
-/* Ligne ambre en haut du modal */
 .adm-modal::before {
     content: '';
     position: absolute;
