@@ -154,5 +154,6 @@
 
 <script type="module" src="{{ asset('js/base.js') }}"></script>
 {% block javascripts %}{% endblock %}
+            {% block importmap %}{{ importmap('app') }}{% endblock %}
 </body>
 </html>

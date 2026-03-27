@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Confirmation de réservation</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link rel="stylesheet" href="public/css/confirmation.css">
+</head>
+<body>
+<div class="wrapper">
+
+    <div class="header">
+        <div class="brand">
+            <div class="brand-mark">EA</div>
+            <div class="brand-name">EventApp</div>
+        </div>
+        <div class="check-icon">
+            <i class="fas fa-check"></i>
+        </div>
+        <div class="header-title">Réservation confirmée !</div>
+        <div class="header-sub">Confirmation · {{ reservation.createdAt|date('d/m/Y à H:i') }}</div>
+    </div>
+
+    <div class="body">
+
+        <div class="greeting">Bonjour {{ reservation.name }} </div>
+
+        <p class="intro-text">
+            Votre réservation a été enregistrée avec succès.
+            Nous avons le plaisir de vous confirmer votre participation à l'événement suivant :
+        </p>
+
+        <div class="event-card">
+            <div class="event-card-header">
+                <div class="event-card-header-dot"></div>
+                <div class="event-card-header-label">Détails de l'événement</div>
+            </div>
+            <div class="event-card-body">
+                <div class="event-title">{{ event.title }}</div>
+
+                <div class="event-detail">
+                    <div class="event-detail-icon">
+                        <i class="far fa-calendar-alt"></i>
+                    </div>
+                    <div>
+                        <div class="event-detail-label">Date</div>
+                        <div class="event-detail-value">
+                            {{ event.date|date('l d MMMM Y') }}
+                            à {{ event.date|date('H:i') }}
+                        </div>
+                    </div>
+                </div>
+
+                <div class="event-detail">
+                    <div class="event-detail-icon">
+                        <i class="fas fa-map-marker-alt"></i>
+                    </div>
+                    <div>
+                        <div class="event-detail-label">Lieu</div>
+                        <div class="event-detail-value">{{ event.location }}</div>
+                    </div>
+                </div>
+
+                {% if event.description %}
+                <div class="event-detail">
+                    <div class="event-detail-icon">
+                        <i class="fas fa-align-left"></i>
+                    </div>
+                    <div>
+                        <div class="event-detail-label">Description</div>
+                        <div class="event-detail-value">
+                            {{ event.description|slice(0, 120) }}{% if event.description|length > 120 %}…{% endif %}
+                        </div>
+                    </div>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+
+        <div class="reservation-box">
+            <div class="reservation-box-title">Votre réservation</div>
+            <div class="reservation-row">
+                <span class="reservation-row-label">
+                    <i class="far fa-user" style="margin-right: 8px;"></i> Nom
+                </span>
+                <span class="reservation-row-value">{{ reservation.name }}</span>
+            </div>
+            <div class="reservation-row">
+                <span class="reservation-row-label">
+                    <i class="far fa-envelope" style="margin-right: 8px;"></i> Email
+                </span>
+                <span class="reservation-row-value">{{ reservation.email }}</span>
+            </div>
+            {% if reservation.phone %}
+            <div class="reservation-row">
+                <span class="reservation-row-label">
+                    <i class="fas fa-phone-alt" style="margin-right: 8px;"></i> Téléphone
+                </span>
+                <span class="reservation-row-value">{{ reservation.phone }}</span>
+            </div>
+            {% endif %}
+            <div class="reservation-row">
+                <span class="reservation-row-label">
+                    <i class="far fa-clock" style="margin-right: 8px;"></i> Date de réservation
+                </span>
+                <span class="reservation-row-value">{{ reservation.createdAt|date('d/m/Y H:i') }}</span>
+            </div>
+            <div class="reservation-row">
+                <span class="reservation-row-label">
+                    <i class="fas fa-check-circle" style="margin-right: 8px;"></i> Statut
+                </span>
+                <span class="reservation-row-value" style="color:#4caf82;font-weight:600;">✓ Confirmée</span>
+            </div>
+        </div>
+
+        <div class="note">
+            <i class="fas fa-info-circle" style="margin-right: 8px;"></i>
+            <strong>Important :</strong> Veuillez conserver cet email comme preuve de votre réservation.
+            Présentez-le à l'entrée de l'événement si nécessaire.
+        </div>
+
+    </div>
+
+    <div class="footer">
+        <div class="footer-brand">
+            <i class="fas fa-calendar-check" style="margin-right: 8px;"></i>
+            EventApp · ISSAT Sousse
+        </div>
+        <div class="footer-divider"></div>
+        <div class="footer-text">
+            <i class="fas fa-envelope" style="margin-right: 6px;"></i>
+            Cet email a été envoyé automatiquement suite à votre réservation.<br>
+            Ne répondez pas à cet email.
+        </div>
+        <div class="footer-divider"></div>
+        <div class="ref-number">
+            <i class="fas fa-hashtag" style="margin-right: 4px;"></i>
+            REF · #{{ reservation.id }} · {{ reservation.createdAt|date('YmdHis') }}
+        </div>
+    </div>
+
+</div>
+</body>
+</html>
