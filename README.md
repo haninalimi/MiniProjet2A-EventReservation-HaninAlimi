@@ -35,6 +35,8 @@ Le projet est développé avec **Symfony 7.4** et suit une architecture MVC prop
 | nelmio/cors-bundle | 2.x | Gestion CORS API |
 | Docker | latest | Containerisation |
 | PHPUnit | 12.x | Tests unitaires et fonctionnels |
+| Mailtrap | x | gère notre envoi d'emails  |
+
 
 ---
 
