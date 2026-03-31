@@ -299,4 +299,4 @@ Event Controller
 
 ---
 
-*Mini Projet — Application Web de Gestion de Réservations d'Événements · Technologies : Symfony + JWT + Passkeys · FIA4-GL · ISSAT Sousse · 2026*
+*Mini Projet — Application Web de Gestion de Réservations d'Événements · Technologies : Symfony + JWT + Passkeys ·2eme cycle ing groupe 4 sous groupe 1· ISSAT Sousse · 2026*
