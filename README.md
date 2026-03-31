@@ -1,6 +1,6 @@
 # EventApp — Application de Gestion de Réservations d'Événements
 
-> **Mini Projet FIA4-GL · ISSAT Sousse · Année universitaire 2025–2026**
+> **Mini Projet 2eme cycle ing groupe 4 sous groupe 1 · ISSAT Sousse · Année universitaire 2025–2026**
 
 [![Symfony](https://img.shields.io/badge/Symfony-7.4.7-black?logo=symfony&logoColor=white)](https://symfony.com)
 [![PHP](https://img.shields.io/badge/PHP-8.3-777BB4?logo=php&logoColor=white)](https://php.net)
@@ -292,7 +292,7 @@ Event Controller
 ## Auteur
 
 **Hanin Alimi**
-- Classe : FIA4-GL
+- Classe : 2eme cycle ing groupe 4 sous groupe 1
 - Institut : ISSAT Sousse
 - Année universitaire : 2025–2026
 - Dépôt : [github.com/haninalimi/MiniProjet2A-EventReservation-HaninAlimi](https://github.com/haninalimi/MiniProjet2A-EventReservation-HaninAlimi)
