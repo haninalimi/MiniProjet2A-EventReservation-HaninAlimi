@@ -1,6 +1,6 @@
 # EventApp — Application de Gestion de Réservations d'Événements
 
-> **Mini Projet 2eme cycle ing groupe 4 sous groupe 1 · ISSAT Sousse · Année universitaire 2025–2026**
+> **Mini Projet · 2ème cycle ing groupe 4 sous-groupe 1 · ISSAT Sousse · 2025–2026**
 
 [![Symfony](https://img.shields.io/badge/Symfony-7.4.7-black?logo=symfony&logoColor=white)](https://symfony.com)
 [![PHP](https://img.shields.io/badge/PHP-8.3-777BB4?logo=php&logoColor=white)](https://php.net)
@@ -11,14 +11,64 @@
 
 ---
 
+
+> Suivez ces étapes dans l'ordre pour faire tourner le projet en moins de 5 minutes.
+
+### Prérequis
+- PHP 8.3+, Composer, PostgreSQL 15, Symfony CLI, OpenSSL
+
+### Installation rapide
+
+```bash
+# 1. Cloner
+git clone https://github.com/haninalimi/MiniProjet2A-EventReservation-HaninAlimi.git
+cd MiniProjet2A-EventReservation-HaninAlimi
+
+# 2. Dépendances
+composer install
+
+# 3. Configurer l'environnement
+cp .env .env.local
+# Éditer .env.local avec vos credentials PostgreSQL (voir section Installation)
+
+# 4. Base de données
+php bin/console doctrine:database:create
+php bin/console doctrine:migrations:migrate
+
+# 5. Clés JWT (obligatoire)
+php bin/console lexik:jwt:generate-keypair
+
+# 6. Compte admin
+php bin/console app:create-admin admin admin123
+
+# 7. Lancer
+symfony server:start
+```
+
+### Accès rapide
+
+| Interface | URL | Identifiants |
+|---|---|---|
+| **Site utilisateur** | `http://127.0.0.1:8000` | S'inscrire via `/register` |
+| **Admin** | `http://127.0.0.1:8000/admin/login` | `admin` / `admin123` |
+
+### Avec Docker (alternative)
+```bash
+docker-compose up -d
+# Disponible sur http://localhost:8080
+```
+
+---
+
 ## Présentation
 
 **EventApp** est une application web complète de gestion et de réservation d'événements. Elle permet :
 
 - Aux **utilisateurs** de consulter, rechercher et réserver des événements en ligne avec une authentification sécurisée JWT + Passkeys (WebAuthn FIDO2)
 - Aux **administrateurs** de gérer le catalogue d'événements via un dashboard professionnel (CRUD complet)
+- **Confirmation automatique par email** après chaque réservation (Mailtrap)
 
-Le projet est développé avec **Symfony 7.4** et suit une architecture MVC propre, avec une séparation claire entre le frontend utilisateur  et l'interface d'administration .
+Le projet est développé avec **Symfony 7.4** et suit une architecture MVC propre.
 
 ---
 
@@ -33,10 +83,10 @@ Le projet est développé avec **Symfony 7.4** et suit une architecture MVC prop
 | gesdinet/jwt-refresh-token-bundle | 1.x | Refresh tokens |
 | web-auth/webauthn-lib | 4.x | Passkeys / WebAuthn FIDO2 |
 | nelmio/cors-bundle | 2.x | Gestion CORS API |
+| symfony/mailer | 7.x | Envoi emails |
+| Mailtrap | — | Service email de test |
 | Docker | latest | Containerisation |
 | PHPUnit | 12.x | Tests unitaires et fonctionnels |
-| Mailtrap | x | gère notre envoi d'emails  |
-
 
 ---
 
@@ -47,7 +97,7 @@ event-reservation/
 ├── src/
 │   ├── Controller/
 │   │   ├── AuthApiController.php      # API JWT + Passkeys
-│   │   ├── EventController.php        # Pages événements utilisateur
+│   │   ├── EventController.php        # Pages événements + envoi email
 │   │   ├── HomeController.php         # Page d'accueil
 │   │   ├── AdminController.php        # Dashboard admin (CRUD)
 │   │   └── SecurityController.php     # Login / Register / Logout
@@ -57,6 +107,8 @@ event-reservation/
 │   │   ├── User.php                   # Entité utilisateur
 │   │   ├── Admin.php                  # Entité administrateur
 │   │   └── WebauthnCredential.php     # Clés Passkey
+│   ├── Email/
+│   │   └── ReservationConfirmationEmail.php  # Email de confirmation
 │   ├── Repository/                    # Requêtes DQL personnalisées
 │   ├── Form/
 │   │   ├── EventType.php              # Formulaire événement
@@ -66,7 +118,9 @@ event-reservation/
 │   └── Command/
 │       └── CreateAdminCommand.php     # Commande créer admin
 ├── templates/
-│   ├── base.html.twig                 # Layout utilisateur 
+│   ├── base.html.twig                 # Layout utilisateur (luxury noir mat)
+│   ├── emails/
+│   │   └── reservation_confirmation.html.twig  # Template email HTML
 │   ├── home/                          # Page d'accueil
 │   ├── event/                         # Pages événements
 │   ├── auth/                          # Login / Register
@@ -76,8 +130,8 @@ event-reservation/
 │   └── js/admin.js                    # Modules JS admin séparés
 ├── tests/
 │   └── Controller/
-│       ├── AuthApiControllerTest.php  # Tests API JWT
-│       └── EventControllerTest.php    # Tests routes frontend
+│       ├── AuthApiControllerTest.php  # Tests API JWT (9 tests)
+│       └── EventControllerTest.php    # Tests routes frontend (10 tests)
 ├── config/
 │   ├── packages/security.yaml         # Firewalls JWT + Admin + User
 │   └── jwt/                           # Clés RSA privée/publique
@@ -93,18 +147,18 @@ event-reservation/
 ### Côté utilisateur
 - ✅ Authentification JWT (login / register)
 - ✅ Connexion biométrique via **Passkeys (WebAuthn FIDO2)**
-- ✅ Affichage de la liste des événements avec recherche et filtres
+- ✅ Affichage de la liste des événements
 - ✅ Consultation du détail d'un événement
 - ✅ Formulaire de réservation (nom, email, téléphone)
 - ✅ Vérification des places disponibles en temps réel
 - ✅ Prévention des doublons (même email / même événement)
-- ✅ Message de confirmation après réservation
+- ✅ **Email de confirmation automatique** après réservation
 
 ### Côté administrateur
 - ✅ Authentification sécurisée (session classique)
 - ✅ Dashboard avec statistiques en temps réel
-- ✅ CRUD complet sur les événements (créer, lire, modifier, supprimer)
-- ✅ Formulaires en modal popup (sans changer de page)
+- ✅ CRUD complet sur les événements
+- ✅ Formulaires en **modal popup** (sans changer de page)
 - ✅ Validation côté client avant envoi au serveur
 - ✅ Confirmation de suppression avec popup personnalisé
 - ✅ Consultation des réservations par événement
@@ -117,19 +171,10 @@ event-reservation/
 - ✅ Protection CSRF sur les formulaires
 - ✅ Firewalls séparés (API stateless / Admin session / User session)
 - ✅ Hachage bcrypt des mots de passe
-- ✅ Validation serveur + client sur tous les formulaires
 
 ---
 
-## Installation
-
-### Prérequis
-
-- PHP 8.3+
-- Composer
-- PostgreSQL 15
-- Symfony CLI
-- OpenSSL
+## Installation détaillée
 
 ### 1. Cloner le dépôt
 
@@ -160,6 +205,9 @@ JWT_PASSPHRASE=event2026
 JWT_TOKEN_TTL=3600
 WEBAUTHN_RP_NAME="Event Reservation App"
 APP_DOMAIN=localhost
+MAILER_DSN=smtp://username:password@sandbox.smtp.mailtrap.io:2525
+MAILER_FROM=noreply@eventapp.dev
+MAILER_FROM_NAME="EventApp"
 ```
 
 ### 4. Créer la base de données
@@ -216,9 +264,9 @@ L'application sera disponible sur `http://localhost:8080`
 
 ### Interface admin
 
-| URL | Description |
+| URL | Identifiants |
 |---|---|
-| `/admin/login` | Connexion administrateur |
+| `/admin/login` | `admin` / `admin123` |
 | `/admin` | Dashboard |
 | `/admin/events` | Gestion des événements |
 | `/admin/events/{id}/reservations` | Réservations par événement |
@@ -249,6 +297,7 @@ php bin/console doctrine:migrations:migrate --env=test --no-interaction
 php bin/phpunit --testdox
 ```
 
+**Résultat : 19/19 tests passent ✅**
 
 ```
 Auth Api Controller
@@ -292,11 +341,11 @@ Event Controller
 ## Auteur
 
 **Hanin Alimi**
-- Classe : 2eme cycle ing groupe 4 sous groupe 1
+- Classe : 2ème cycle ing groupe 4 sous-groupe 1
 - Institut : ISSAT Sousse
 - Année universitaire : 2025–2026
 - Dépôt : [github.com/haninalimi/MiniProjet2A-EventReservation-HaninAlimi](https://github.com/haninalimi/MiniProjet2A-EventReservation-HaninAlimi)
 
 ---
 
-*Mini Projet — Application Web de Gestion de Réservations d'Événements · Technologies : Symfony + JWT + Passkeys ·2eme cycle ing groupe 4 sous groupe 1· ISSAT Sousse · 2026*
+*Mini Projet — Application Web de Gestion de Réservations d'Événements · Symfony + JWT + Passkeys + Email · ISSAT Sousse · 2026*
